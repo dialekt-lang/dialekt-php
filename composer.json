@@ -1,0 +1,29 @@
+{
+    "name": "icecave/disekt",
+    "description": "This package needs a description!",
+    "keywords": [],
+    "homepage": "https://github.com/IcecaveStudios/disekt",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "James Harris",
+            "email": "james.harris@icecave.com.au",
+            "homepage": "https://github.com/jmalloc"
+        }
+    ],
+    "require": {
+        "php": ">=5.3",
+        "icecave/isolator": "~2"
+    },
+    "require-dev": {
+        "icecave/archer": "~1"
+    },
+    "suggest": {
+        "eloquent/asplode": "Drop-in exception-based error handling."
+    },
+    "autoload": {
+        "psr-4": {
+            "Icecave\\Disekt\\": "src"
+        }
+    }
+}
