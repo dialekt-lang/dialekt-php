@@ -19,42 +19,34 @@ class DefaultLexer implements LexerInterface
         $this->tokens = array();
         $this->buffer = '';
 
-        foreach (str_split($expression) as $char) {
-            $this->process($char);
+        $length = strlen($expression);
+
+        for ($index = 0; $index < $length; ++$index) {
+            $char = $expression[$index];
+
+            if (self::STATE_SIMPLE_STRING === $this->state) {
+                $this->handleSimpleStringState($char);
+            } elseif (self::STATE_QUOTED_STRING === $this->state) {
+                $this->handleQuotedStringState($char);
+            } elseif (self::STATE_QUOTED_STRING_ESCAPE === $this->state) {
+                $this->handleQuotedStringEscapeState($char);
+            } else {
+                $this->handleBeginState($char);
+            }
         }
 
-        $this->finalize();
+        if (self::STATE_SIMPLE_STRING === $this->state) {
+            $this->finalizeSimpleString();
+        } elseif (self::STATE_QUOTED_STRING === $this->state) {
+            throw new ParseException('Expected closing quote.');
+        } elseif (self::STATE_QUOTED_STRING_ESCAPE === $this->state) {
+            throw new ParseException('Expected character after backslash.');
+        }
 
         return $this->tokens;
     }
 
-    private function process($char)
-    {
-        switch ($this->state) {
-            case self::STATE_SIMPLE_STRING:
-                return $this->processSimpleString($char);
-            case self::STATE_QUOTED_STRING:
-                return $this->processQuotedString($char);
-            case self::STATE_QUOTED_STRING_ESCAPE:
-                return $this->processQuotedStringEscape($char);
-        }
-
-        return $this->processStart($char);
-    }
-
-    private function finalize()
-    {
-        switch ($this->state) {
-            case self::STATE_SIMPLE_STRING:
-                return $this->finalizeSimpleString();
-            case self::STATE_QUOTED_STRING:
-                throw new ParseException('Expected closing quote.');
-            case self::STATE_QUOTED_STRING_ESCAPE:
-                throw new ParseException('Expected character after backslash.');
-        }
-    }
-
-    private function processStart($char)
+    private function handleBeginState($char)
     {
         if (ctype_space($char)) {
             // ignore
@@ -70,7 +62,7 @@ class DefaultLexer implements LexerInterface
         }
     }
 
-    private function processSimpleString($char)
+    private function handleSimpleStringState($char)
     {
         if (ctype_space($char)) {
             $this->finalizeSimpleString();
@@ -85,18 +77,20 @@ class DefaultLexer implements LexerInterface
         }
     }
 
-    private function processQuotedString($char)
+    private function handleQuotedStringState($char)
     {
         if ($char === '\\') {
             $this->state = self::STATE_QUOTED_STRING_ESCAPE;
         } elseif ($char === '"') {
-            $this->emit(Token::TOKEN_STRING);
+            $this->tokens[] = new Token(Token::TOKEN_STRING, $this->buffer);
+            $this->state = self::STATE_START;
+            $this->buffer = '';
         } else {
             $this->buffer .= $char;
         }
     }
 
-    private function processQuotedStringEscape($char)
+    private function handleQuotedStringEscapeState($char)
     {
         $this->state = self::STATE_QUOTED_STRING;
         $this->buffer .= $char;
@@ -114,13 +108,8 @@ class DefaultLexer implements LexerInterface
             $tokenType = Token::TOKEN_STRING;
         }
 
-        $this->emit($tokenType);
-    }
-
-    private function emit($type)
-    {
+        $this->tokens[] = new Token($tokenType, $this->buffer);
         $this->state = self::STATE_START;
-        $this->tokens[] = new Token($type, $this->buffer);
         $this->buffer = '';
     }
 

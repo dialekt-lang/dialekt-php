@@ -132,6 +132,16 @@ class DefaultLexerTest extends PHPUnit_Framework_TestCase
                     new Token(Token::TOKEN_STRING, 'spam'),
                 ),
             ),
+            'nesting interrupts simple string into quoted string' => array(
+                'foo(bar)"spam"',
+                array(
+                    new Token(Token::TOKEN_STRING, 'foo'),
+                    new Token(Token::TOKEN_OPEN_NEST, '('),
+                    new Token(Token::TOKEN_STRING, 'bar'),
+                    new Token(Token::TOKEN_CLOSE_NEST, ')'),
+                    new Token(Token::TOKEN_STRING, 'spam'),
+                ),
+            ),
             'whitespace' => array(
                 " \t\nfoo\tbar\nspam\t ",
                 array(
