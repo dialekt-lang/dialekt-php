@@ -1,1 +1,1 @@
-# Disekt Changelog
+# Dialekt Changelog

@@ -1,8 +1,8 @@
 <?php
-namespace Icecave\Disekt;
+namespace Icecave\Dialekt;
 
 class PackageInfo
 {
-    const NAME = 'Disekt';
+    const NAME = 'Dialekt';
     const VERSION = '0.0.0';
 }

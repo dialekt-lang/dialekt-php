@@ -1,8 +1,8 @@
 {
-    "name": "icecave/disekt",
+    "name": "icecave/dialekt",
     "description": "This package needs a description!",
     "keywords": [],
-    "homepage": "https://github.com/IcecaveStudios/disekt",
+    "homepage": "https://github.com/IcecaveStudios/dialekt",
     "license": "MIT",
     "authors": [
         {
@@ -23,7 +23,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Icecave\\Disekt\\": "src"
+            "Icecave\\Dialekt\\": "src"
         }
     }
 }
