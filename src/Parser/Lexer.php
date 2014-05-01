@@ -3,7 +3,7 @@ namespace Icecave\Dialekt\Parser;
 
 use Icecave\Dialekt\Parser\Exception\ParseException;
 
-class DefaultLexer implements LexerInterface
+class Lexer implements LexerInterface
 {
     /**
      * Tokenize an expression.
@@ -51,9 +51,9 @@ class DefaultLexer implements LexerInterface
         if (ctype_space($char)) {
             // ignore
         } elseif ($char === '(') {
-            $this->tokens[] = new Token(Token::TOKEN_OPEN_NEST, $char);
+            $this->tokens[] = new Token(Token::OPEN_NEST, $char);
         } elseif ($char === ')') {
-            $this->tokens[] = new Token(Token::TOKEN_CLOSE_NEST, $char);
+            $this->tokens[] = new Token(Token::CLOSE_NEST, $char);
         } elseif ($char === '"') {
             $this->state = self::STATE_QUOTED_STRING;
         } elseif (ctype_alnum($char)) {
@@ -68,10 +68,10 @@ class DefaultLexer implements LexerInterface
             $this->finalizeSimpleString();
         } elseif ($char === '(') {
             $this->finalizeSimpleString();
-            $this->tokens[] = new Token(Token::TOKEN_OPEN_NEST, $char);
+            $this->tokens[] = new Token(Token::OPEN_NEST, $char);
         } elseif ($char === ')') {
             $this->finalizeSimpleString();
-            $this->tokens[] = new Token(Token::TOKEN_CLOSE_NEST, $char);
+            $this->tokens[] = new Token(Token::CLOSE_NEST, $char);
         } else {
             $this->buffer .= $char;
         }
@@ -82,7 +82,7 @@ class DefaultLexer implements LexerInterface
         if ($char === '\\') {
             $this->state = self::STATE_QUOTED_STRING_ESCAPE;
         } elseif ($char === '"') {
-            $this->tokens[] = new Token(Token::TOKEN_STRING, $this->buffer);
+            $this->tokens[] = new Token(Token::STRING, $this->buffer);
             $this->state = self::STATE_START;
             $this->buffer = '';
         } else {
@@ -99,13 +99,13 @@ class DefaultLexer implements LexerInterface
     private function finalizeSimpleString()
     {
         if (strcasecmp('and', $this->buffer) === 0) {
-            $tokenType = Token::TOKEN_LOGICAL_AND;
+            $tokenType = Token::LOGICAL_AND;
         } elseif (strcasecmp('or', $this->buffer) === 0) {
-            $tokenType = Token::TOKEN_LOGICAL_OR;
+            $tokenType = Token::LOGICAL_OR;
         } elseif (strcasecmp('not', $this->buffer) === 0) {
-            $tokenType = Token::TOKEN_LOGICAL_NOT;
+            $tokenType = Token::LOGICAL_NOT;
         } else {
-            $tokenType = Token::TOKEN_STRING;
+            $tokenType = Token::STRING;
         }
 
         $this->tokens[] = new Token($tokenType, $this->buffer);

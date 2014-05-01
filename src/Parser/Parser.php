@@ -9,7 +9,7 @@ class Parser implements ParserInterface
     public function __construct(LexerInterface $lexer = null)
     {
         if (null === $lexer) {
-            $lexer = new DefaultLexer;
+            $lexer = new Lexer;
         }
 
         $this->lexer = $lexer;
