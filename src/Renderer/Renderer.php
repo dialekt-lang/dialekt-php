@@ -68,16 +68,24 @@ class Renderer implements RendererInterface, VisitorInterface
 
     private function escapeString($string)
     {
+        if (
+            0 === strcasecmp('and', $string)
+            || 0 === strcasecmp('or', $string)
+            || 0 === strcasecmp('not', $string)
+        ) {
+            return '"' . $string . '"';
+        }
+
         $count = 0;
         $string = preg_replace(
-            '/[\s\(\)"\\\\]/',
+            '/[\(\)"\\\\]/',
             '\\\\$0',
             $string,
             -1,
             $count
         );
 
-        if ($count) {
+        if ($count || preg_match('/\s/', $string)) {
             return '"' . $string . '"';
         }
 

@@ -42,6 +42,22 @@ class RendererTest extends PHPUnit_Framework_TestCase
                 new Tag('f\\o"o'),
                 '"f\\\\o\\"o"',
             ),
+            'escaped tag - logical and' => array(
+                new Tag('and'),
+                '"and"',
+            ),
+            'escaped tag - logical or' => array(
+                new Tag('or'),
+                '"or"',
+            ),
+            'escaped tag - logical not' => array(
+                new Tag('not'),
+                '"not"',
+            ),
+            'tag with spaces' => array(
+                new Tag('foo bar'),
+                '"foo bar"',
+            ),
             'wildcard' => array(
                 new Wildcard('foo*'),
                 'foo*',
