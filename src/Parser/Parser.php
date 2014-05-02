@@ -105,8 +105,6 @@ class Parser implements ParserInterface
 
     private function parseNestedExpression(array &$tokens)
     {
-        ++$this->nestingLevel;
-
         next($tokens);
 
         $expression = $this->parseExpression($tokens);
@@ -117,8 +115,6 @@ class Parser implements ParserInterface
         );
 
         next($tokens);
-
-        --$this->nestingLevel;
 
         return $expression;
     }
@@ -234,5 +230,4 @@ class Parser implements ParserInterface
     }
 
     private $lexer;
-    private $nestingLevel = 0;
 }
