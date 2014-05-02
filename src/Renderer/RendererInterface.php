@@ -1,6 +1,8 @@
 <?php
 namespace Icecave\Dialekt\Renderer;
 
+use Icecave\Dialekt\Expression\ExpressionInterface;
+
 interface RendererInterface
 {
     /**

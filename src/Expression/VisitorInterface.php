@@ -11,5 +11,8 @@ interface VisitorInterface
 
     public function visitTag(Tag $expression);
 
-    public function visitTagPattern(TagPattern $expression);
+    public function visitWildcard(Wildcard $expression);
+
+    public function visitEmptyExpression(EmptyExpression $expression);
+
 }

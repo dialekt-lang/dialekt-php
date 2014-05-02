@@ -13,11 +13,11 @@ class LexerTest extends PHPUnit_Framework_TestCase
     /**
      * @dataProvider lexTestVectors
      */
-    public function testLex($expression, $expectedTokens)
+    public function testLex($expression, $expectedResult)
     {
-        $tokens = $this->lexer->lex($expression);
+        $result = $this->lexer->lex($expression);
 
-        $this->assertEquals($expectedTokens, $tokens);
+        $this->assertEquals($expectedResult, $result);
     }
 
     public function testLexFailureInQuotedString()
@@ -47,10 +47,26 @@ class LexerTest extends PHPUnit_Framework_TestCase
                 '',
                 array(),
             ),
+            'whitespace only' => array(
+                " \n \t ",
+                array(),
+            ),
             'simple string' => array(
                 'foo-bar',
                 array(
                     new Token(Token::STRING, 'foo-bar'),
+                ),
+            ),
+            'simple string with leading hyphen' => array(
+                '-foo',
+                array(
+                    new Token(Token::STRING, '-foo'),
+                ),
+            ),
+            'simple string with leading hyphen and asterisk' => array(
+                '-foo*-',
+                array(
+                    new Token(Token::STRING, '-foo*-'),
                 ),
             ),
             'multiple simple strings' => array(
@@ -113,22 +129,22 @@ class LexerTest extends PHPUnit_Framework_TestCase
             'open nesting' => array(
                 '(',
                 array(
-                    new Token(Token::OPEN_NEST, '('),
+                    new Token(Token::OPEN_BRACKET, '('),
                 ),
             ),
             'close nesting' => array(
                 ')',
                 array(
-                    new Token(Token::CLOSE_NEST, ')'),
+                    new Token(Token::CLOSE_BRACKET, ')'),
                 ),
             ),
             'nesting interrupts simple string' => array(
                 'foo(bar)spam',
                 array(
                     new Token(Token::STRING, 'foo'),
-                    new Token(Token::OPEN_NEST, '('),
+                    new Token(Token::OPEN_BRACKET, '('),
                     new Token(Token::STRING, 'bar'),
-                    new Token(Token::CLOSE_NEST, ')'),
+                    new Token(Token::CLOSE_BRACKET, ')'),
                     new Token(Token::STRING, 'spam'),
                 ),
             ),
@@ -136,13 +152,13 @@ class LexerTest extends PHPUnit_Framework_TestCase
                 'foo(bar)"spam"',
                 array(
                     new Token(Token::STRING, 'foo'),
-                    new Token(Token::OPEN_NEST, '('),
+                    new Token(Token::OPEN_BRACKET, '('),
                     new Token(Token::STRING, 'bar'),
-                    new Token(Token::CLOSE_NEST, ')'),
+                    new Token(Token::CLOSE_BRACKET, ')'),
                     new Token(Token::STRING, 'spam'),
                 ),
             ),
-            'whitespace' => array(
+            'whitespace surrounding strings' => array(
                 " \t\nfoo\tbar\nspam\t ",
                 array(
                     new Token(Token::STRING, 'foo'),

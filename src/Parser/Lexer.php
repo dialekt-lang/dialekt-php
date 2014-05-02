@@ -15,7 +15,7 @@ class Lexer implements LexerInterface
      */
     public function lex($expression)
     {
-        $this->state = self::STATE_START;
+        $this->state = self::STATE_BEGIN;
         $this->tokens = array();
         $this->buffer = '';
 
@@ -51,12 +51,12 @@ class Lexer implements LexerInterface
         if (ctype_space($char)) {
             // ignore
         } elseif ($char === '(') {
-            $this->tokens[] = new Token(Token::OPEN_NEST, $char);
+            $this->tokens[] = new Token(Token::OPEN_BRACKET, $char);
         } elseif ($char === ')') {
-            $this->tokens[] = new Token(Token::CLOSE_NEST, $char);
+            $this->tokens[] = new Token(Token::CLOSE_BRACKET, $char);
         } elseif ($char === '"') {
             $this->state = self::STATE_QUOTED_STRING;
-        } elseif (ctype_alnum($char)) {
+        } else {
             $this->state = self::STATE_SIMPLE_STRING;
             $this->buffer = $char;
         }
@@ -68,10 +68,10 @@ class Lexer implements LexerInterface
             $this->finalizeSimpleString();
         } elseif ($char === '(') {
             $this->finalizeSimpleString();
-            $this->tokens[] = new Token(Token::OPEN_NEST, $char);
+            $this->tokens[] = new Token(Token::OPEN_BRACKET, $char);
         } elseif ($char === ')') {
             $this->finalizeSimpleString();
-            $this->tokens[] = new Token(Token::CLOSE_NEST, $char);
+            $this->tokens[] = new Token(Token::CLOSE_BRACKET, $char);
         } else {
             $this->buffer .= $char;
         }
@@ -83,7 +83,7 @@ class Lexer implements LexerInterface
             $this->state = self::STATE_QUOTED_STRING_ESCAPE;
         } elseif ($char === '"') {
             $this->tokens[] = new Token(Token::STRING, $this->buffer);
-            $this->state = self::STATE_START;
+            $this->state = self::STATE_BEGIN;
             $this->buffer = '';
         } else {
             $this->buffer .= $char;
@@ -109,11 +109,11 @@ class Lexer implements LexerInterface
         }
 
         $this->tokens[] = new Token($tokenType, $this->buffer);
-        $this->state = self::STATE_START;
+        $this->state = self::STATE_BEGIN;
         $this->buffer = '';
     }
 
-    const STATE_START                = 1;
+    const STATE_BEGIN                = 1;
     const STATE_SIMPLE_STRING        = 2;
     const STATE_QUOTED_STRING        = 3;
     const STATE_QUOTED_STRING_ESCAPE = 4;

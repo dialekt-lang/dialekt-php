@@ -1,7 +1,7 @@
 <?php
 namespace Icecave\Dialekt\Expression;
 
-class TagPattern implements ExpressionInterface
+class Wildcard implements ExpressionInterface
 {
     public function __construct($pattern)
     {
@@ -15,7 +15,7 @@ class TagPattern implements ExpressionInterface
 
     public function accept(VisitorInterface $visitor)
     {
-        return $visitor->visitTagPattern($this);
+        return $visitor->visitWildcard($this);
     }
 
     private $pattern;

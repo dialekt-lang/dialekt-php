@@ -3,15 +3,16 @@ namespace Icecave\Dialekt\Expression;
 
 abstract class AbstractCompoundExpression implements ExpressionInterface
 {
-    public function __construct(array $children)
+    public function __construct()
     {
-        foreach ($children as $child) {
-            if (!$child instanceof ExpressionInterface) {
-                throw new InvalidArgumentException('Children must be an array of expressions.');
-            }
-
-            $this->children[] = $children;
+        foreach (func_get_args() as $child) {
+            $this->add($child);
         }
+    }
+
+    public function add(ExpressionInterface $expression)
+    {
+        $this->children[] = $expression;
     }
 
     public function children()
