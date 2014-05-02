@@ -1,6 +1,8 @@
 <?php
 namespace Icecave\Dialekt\Parser;
 
+use LogicException;
+
 final class Token
 {
     const LOGICAL_AND   = 1;
@@ -32,6 +34,8 @@ final class Token
             case self::CLOSE_BRACKET:
                 return 'close bracket';
         };
+
+        throw new LogicException('Unknown type.');
     }
 
     public $type;
