@@ -34,7 +34,15 @@ class Parser implements ParserInterface
         $tokens = $this->lexer->lex($expression);
 
         if ($tokens) {
-            return $this->parseExpression($tokens);
+            $expression = $this->parseExpression($tokens);
+
+            if (null !== key($tokens)) {
+                throw new ParseException(
+                    'Unexpected ' . Token::typeDescription(current($tokens)->type) . ', expected end of input.'
+                );
+            }
+
+            return $expression;
         }
 
         return new EmptyExpression;

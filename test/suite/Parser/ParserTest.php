@@ -224,9 +224,13 @@ class ParserTest extends PHPUnit_Framework_TestCase
                 'a OR',
                 'Unexpected end of input, expected tag, NOT operator or open bracket.',
             ),
-            'mismatched braces' => array(
+            'mismatched braces 1' => array(
                 '(a',
                 'Unexpected end of input, expected close bracket.'
+            ),
+            'mismatched braces 2' => array(
+                'a)',
+                'Unexpected close bracket, expected end of input.'
             ),
             'invalid tag' => array(
                 '-foo-',
