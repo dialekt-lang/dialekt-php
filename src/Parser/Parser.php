@@ -1,6 +1,7 @@
 <?php
 namespace Icecave\Dialekt\Parser;
 
+use Icecave\Dialekt\Expression\AbstractCompoundExpression;
 use Icecave\Dialekt\Expression\EmptyExpression;
 use Icecave\Dialekt\Expression\ExpressionInterface;
 use Icecave\Dialekt\Expression\LogicalAnd;
@@ -104,6 +105,8 @@ class Parser implements ParserInterface
 
     private function parseNestedExpression(array &$tokens)
     {
+        ++$this->nestingLevel;
+
         next($tokens);
 
         $expression = $this->parseExpression($tokens);
@@ -114,6 +117,8 @@ class Parser implements ParserInterface
         );
 
         next($tokens);
+
+        --$this->nestingLevel;
 
         return $expression;
     }
@@ -129,6 +134,8 @@ class Parser implements ParserInterface
 
     private function parseCompoundExpression(array &$tokens, ExpressionInterface $leftExpression, $minimumPrecedence = 0)
     {
+        $allowCollapse = false;
+
         while ($minimumPrecedence <= ($precedence = $this->getOperatorPrecedence($tokens))) {
 
             $token = current($tokens);
@@ -161,13 +168,14 @@ class Parser implements ParserInterface
                 );
             }
 
-            if ($leftExpression instanceof $expressionClass) {
+            if ($allowCollapse && $leftExpression instanceof $expressionClass) {
                 $leftExpression->add($rightExpression);
             } else {
                 $leftExpression = new $expressionClass(
                     $leftExpression,
                     $rightExpression
                 );
+                $allowCollapse = true;
             }
         }
 

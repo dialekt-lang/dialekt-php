@@ -83,6 +83,19 @@ class ParserTest extends PHPUnit_Framework_TestCase
                     )
                 ),
             ),
+            'multiple nested groups remain nested' => array(
+                '(a b) (c d)',
+                new LogicalAnd(
+                    new LogicalAnd(
+                        new Tag('a'),
+                        new Tag('b')
+                    ),
+                    new LogicalAnd(
+                        new Tag('c'),
+                        new Tag('d')
+                    )
+                )
+            ),
             'logical and' => array(
                 'a AND b',
                 new LogicalAnd(
