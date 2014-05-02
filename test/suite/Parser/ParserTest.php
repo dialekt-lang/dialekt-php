@@ -167,7 +167,25 @@ class ParserTest extends PHPUnit_Framework_TestCase
                     )
                 ),
             ),
-            'complex 1' => array(
+            'logical not implicit precedence' => array(
+                'NOT a AND b',
+                new LogicalAnd(
+                    new LogicalNot(
+                        new Tag('a')
+                    ),
+                    new Tag('b')
+                )
+            ),
+            'logical not explicit precedence' => array(
+                'NOT (a AND b)',
+                new LogicalNot(
+                    new LogicalAnd(
+                        new Tag('a'),
+                        new Tag('b')
+                    )
+                )
+            ),
+            'complex nested' => array(
                 'a ((b OR c) AND (d OR e)) f',
                 new LogicalAnd(
                     new Tag('a'),
