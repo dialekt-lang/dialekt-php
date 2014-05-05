@@ -54,10 +54,6 @@ class TreeRenderer implements RendererInterface, VisitorInterface
     {
         $child = $this->render($expression->child());
 
-        if (false === strpos($child, PHP_EOL)) {
-            return 'NOT ' . $child;
-        }
-
         $output  = 'NOT ' . PHP_EOL;
         $output .= $this->indent('- ' . $child);
 

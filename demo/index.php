@@ -14,6 +14,7 @@ $treeRenderer = new Icecave\Dialekt\Renderer\TreeRenderer;
             body {
                 font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
                 font-size: 16px;
+                line-height: 20px;
                 background: #ffffff;
                 margin: 50px;
                 padding: 0;
@@ -41,6 +42,7 @@ $treeRenderer = new Icecave\Dialekt\Renderer\TreeRenderer;
                 width: 550px;
                 margin-right: 10px;
                 outline: none;
+                font-family: "Andale Mono", "Menlo", "Monaco", "Courier New", monospace;
             }
 
             #submit {
@@ -82,11 +84,19 @@ $treeRenderer = new Icecave\Dialekt\Renderer\TreeRenderer;
 
             p {
                 margin: 20px 0px;
+                color: #404040;
             }
 
             pre {
                 white-space: pre-wrap;
                 margin: 0;
+                color: #404040;
+                font-size: 15px;
+                font-family: "Andale Mono", "Menlo", "Monaco", "Courier New", monospace;
+            }
+
+            .error {
+                color: #ff4000;
             }
         </style>
         <script>
@@ -98,11 +108,20 @@ $treeRenderer = new Icecave\Dialekt\Renderer\TreeRenderer;
     <body>
         <div class="container">
             <section>
-                <h1>Expression Input</h1>
+                <h1>Expression Parser</h1>
                 <p>
-                Enter a list of tags separated by spaces.
-                Use the <strong>AND</strong>, <strong>OR</strong> and <strong>NOT</strong> keywords to perform boolean operations.
-                Expressions may be grouped in brackets to set precedence.
+                This page demonstrates how tag expressions are parsed to generate an abstract syntax tree (AST).
+                The AST can be traversed to produce the desired output, for example an SQL "WHERE" clause that finds
+                entries with the matching tags.
+                </p>
+                <p>
+                Enter a list of tags separated by spaces. Optionally use the <strong>AND</strong>, <strong>OR</strong>
+                and <strong>NOT</strong> keywords to perform boolean operations. Expressions grouped in brackets
+                are evaluated first.
+                </p>
+                <p>
+                By default, two adjacent tags are treated as an <strong>AND</strong> operation. This behavior can be
+                changed by selecting the checkbox below.
                 </p>
                 <form method="get">
                     <input id="expr" type="text" value="<?=htmlentities($_GET['expr'])?>" name="expr">
@@ -129,7 +148,7 @@ $treeRenderer = new Icecave\Dialekt\Renderer\TreeRenderer;
 
                 } catch (Icecave\Dialekt\Parser\Exception\ParseException $e) {
 
-                    echo '<section>';
+                    echo '<section class="error">';
                     echo '<h1>Parse Error</h1>';
                     echo '<pre>' . htmlentities($e->getMessage()) . '</pre>';
                     echo '</section>';
@@ -138,7 +157,7 @@ $treeRenderer = new Icecave\Dialekt\Renderer\TreeRenderer;
             ?>
         </div>
         <footer>
-            Powered by <a href="https://github.com/IcecaveStudios/dialekt">Dialekt</a>
+            Powered by <a href="https://github.com/IcecaveLabs/dialekt">Dialekt</a>
         </footer>
     </body>
 </html>
