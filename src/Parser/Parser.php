@@ -1,7 +1,6 @@
 <?php
 namespace Icecave\Dialekt\Parser;
 
-use Icecave\Dialekt\Expression\AbstractCompoundExpression;
 use Icecave\Dialekt\Expression\EmptyExpression;
 use Icecave\Dialekt\Expression\ExpressionInterface;
 use Icecave\Dialekt\Expression\LogicalAnd;
@@ -13,12 +12,15 @@ use Icecave\Dialekt\Parser\Exception\ParseException;
 
 class Parser implements ParserInterface
 {
-    public function __construct(LexerInterface $lexer = null)
-    {
+    public function __construct(
+        $logicalOrByDefault = false,
+        LexerInterface $lexer = null
+    ) {
         if (null === $lexer) {
             $lexer = new Lexer;
         }
 
+        $this->logicalOrByDefault = $logicalOrByDefault;
         $this->lexer = $lexer;
     }
 
@@ -132,31 +134,31 @@ class Parser implements ParserInterface
     {
         $allowCollapse = false;
 
-        while ($minimumPrecedence <= ($precedence = $this->getOperatorPrecedence($tokens))) {
+        while (true) {
 
-            $token = current($tokens);
+            // Parse the operator and determine whether or not it's explicit ...
+            list($operator, $isExplicit) = $this->parseOperator($tokens);
 
-            // Explicit logical AND ...
-            if (Token::LOGICAL_AND === $token->type) {
-                $operator = Token::LOGICAL_AND;
-                $expressionClass = 'Icecave\Dialekt\Expression\LogicalAnd';
-                next($tokens);
+            $precedence = $this->operatorPrecedence[$operator];
 
-            // Explicit logical OR ...
-            } elseif (Token::LOGICAL_OR === $token->type) {
-                $operator = Token::LOGICAL_OR;
-                $expressionClass = 'Icecave\Dialekt\Expression\LogicalOr';
-                next($tokens);
-
-            // Implicit logical AND ...
-            } else {
-                $operator = Token::LOGICAL_AND;
-                $expressionClass = 'Icecave\Dialekt\Expression\LogicalAnd';
+            // Abort if the operator's precedence is less than what we're looking for ...
+            if ($precedence < $minimumPrecedence) {
+                break;
             }
 
+            // Advance the token pointer if an explicit operator token was found ...
+            if ($isExplicit) {
+                next($tokens);
+            }
+
+            // Parse the expression to the right of the operator ...
             $rightExpression = $this->parseUnaryExpression($tokens);
 
-            if ($precedence < $this->getOperatorPrecedence($tokens)) {
+            // Only parse additional compound expressions if their precedence is greater than the
+            // expression already being parsed ...
+            list($nextOperator) = $this->parseOperator($tokens);
+
+            if ($precedence < $this->operatorPrecedence[$nextOperator]) {
                 $rightExpression = $this->parseCompoundExpression(
                     $tokens,
                     $rightExpression,
@@ -164,10 +166,14 @@ class Parser implements ParserInterface
                 );
             }
 
-            if ($allowCollapse && $leftExpression instanceof $expressionClass) {
+            // Combine the parsed expression with the existing expression ...
+            $operatorClass = $this->operatorClasses[$operator];
+
+            // Collapse the expression into an existing expression of the same type ...
+            if ($allowCollapse && $leftExpression instanceof $operatorClass) {
                 $leftExpression->add($rightExpression);
             } else {
-                $leftExpression = new $expressionClass(
+                $leftExpression = new $operatorClass(
                     $leftExpression,
                     $rightExpression
                 );
@@ -178,21 +184,36 @@ class Parser implements ParserInterface
         return $leftExpression;
     }
 
-    private function getOperatorPrecedence(array &$tokens)
+    private function parseOperator(array &$tokens)
     {
         $token = current($tokens);
 
+        // End of input ...
         if (false === $token) {
-            return -1;
+            return array(null, false);
+
+        // Closing bracket ...
         } elseif (Token::CLOSE_BRACKET === $token->type) {
-            return -1;
+            return array(null, false);
+
+        // Explicit logical OR ...
         } elseif (Token::LOGICAL_OR === $token->type) {
-            return 0;
+            return array(Token::LOGICAL_OR, true);
+
+        // Explicit logical AND ...
+        } elseif (Token::LOGICAL_AND === $token->type) {
+            return array(Token::LOGICAL_AND, true);
+
+        // Implicit logical OR ...
+        } elseif ($this->logicalOrByDefault) {
+            return array(Token::LOGICAL_OR, false);
+
+        // Implicit logical AND ...
         } else {
-            return 1;
+            return array(Token::LOGICAL_AND, false);
         }
 
-        return -1;
+        return array(null, false);
     }
 
     private function expect(array &$tokens)
@@ -230,4 +251,16 @@ class Parser implements ParserInterface
     }
 
     private $lexer;
+    private $logicalOrByDefault;
+
+    private $operatorClasses = array(
+        Token::LOGICAL_AND => 'Icecave\Dialekt\Expression\LogicalAnd',
+        Token::LOGICAL_OR  => 'Icecave\Dialekt\Expression\LogicalOr',
+    );
+
+    private $operatorPrecedence = array(
+        Token::LOGICAL_AND => 1,
+        Token::LOGICAL_OR  => 0,
+        null               => -1,
+    );
 }

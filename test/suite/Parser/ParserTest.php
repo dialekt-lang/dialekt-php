@@ -50,6 +50,18 @@ class ParserTest extends PHPUnit_Framework_TestCase
         }
     }
 
+    public function testParseUsingLogicalOrAsDefaultOperator()
+    {
+        $this->parser = new Parser(true);
+
+        $result = $this->parser->parse('a and b c and d');
+
+        $this->assertEquals(
+            '((a AND b) OR (c AND d))',
+            $this->renderer->render($result)
+        );
+    }
+
     public function parseTestVectors()
     {
         return array(
