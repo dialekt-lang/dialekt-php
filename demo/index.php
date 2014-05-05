@@ -1,7 +1,7 @@
 <?php
 require __DIR__ . '/../vendor/autoload.php';
 
-$parser = new Icecave\Dialekt\Parser\Parser;
+$parser = new Icecave\Dialekt\Parser\Parser(isset($_GET['orByDefault']));
 $renderer = new Icecave\Dialekt\Renderer\Renderer;
 $treeRenderer = new Icecave\Dialekt\Renderer\TreeRenderer;
 ?>
@@ -34,6 +34,7 @@ $treeRenderer = new Icecave\Dialekt\Renderer\TreeRenderer;
                 border: none;
                 background: #efefef;
                 padding: 7px;
+                margin: 5px 0px;
             }
 
             #expr {
@@ -79,12 +80,8 @@ $treeRenderer = new Icecave\Dialekt\Renderer\TreeRenderer;
                 border-bottom: 2px solid #cccccc;
             }
 
-            form {
-                margin-bottom: 15px;
-            }
-
             p {
-                margin: 0px;
+                margin: 20px 0px;
             }
 
             pre {
@@ -102,15 +99,16 @@ $treeRenderer = new Icecave\Dialekt\Renderer\TreeRenderer;
         <div class="container">
             <section>
                 <h1>Expression Input</h1>
-                <form method="get">
-                    <input id="expr" type="text" value="<?=htmlentities($_GET['expr'])?>" name="expr">
-                    <input id="submit" type="submit" value="Parse">
-                </form>
                 <p>
                 Enter a list of tags separated by spaces.
                 Use the <strong>AND</strong>, <strong>OR</strong> and <strong>NOT</strong> keywords to perform boolean operations.
                 Expressions may be grouped in brackets to set precedence.
                 </p>
+                <form method="get">
+                    <input id="expr" type="text" value="<?=htmlentities($_GET['expr'])?>" name="expr">
+                    <input id="submit" type="submit" value="Parse">
+                    <label><input name="orByDefault" type="checkbox" <?=isset($_GET['orByDefault']) ? ' checked' : ''?>> Use <strong>OR</strong> operator by default.</label>
+                </form>
             </section>
 
             <?php
