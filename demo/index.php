@@ -1,8 +1,8 @@
 <?php
 require __DIR__ . '/../vendor/autoload.php';
 
-$parser = new Icecave\Dialekt\Parser\Parser(isset($_GET['orByDefault']));
-$renderer = new Icecave\Dialekt\Renderer\Renderer;
+$parser = new Icecave\Dialekt\Parser\Parser(null, isset($_GET['orByDefault']));
+$renderer = new Icecave\Dialekt\Renderer\ExpressionRenderer;
 $treeRenderer = new Icecave\Dialekt\Renderer\TreeRenderer;
 ?>
 <!DOCTYPE html>

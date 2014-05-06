@@ -1,25 +1,40 @@
 <?php
 namespace Icecave\Dialekt\Parser;
 
-use Icecave\Dialekt\Expression\EmptyExpression;
-use Icecave\Dialekt\Expression\ExpressionInterface;
-use Icecave\Dialekt\Expression\LogicalAnd;
-use Icecave\Dialekt\Expression\LogicalNot;
-use Icecave\Dialekt\Expression\LogicalOr;
-use Icecave\Dialekt\Expression\Tag;
-use Icecave\Dialekt\Expression\Wildcard;
+use Icecave\Dialekt\AST\EmptyExpression;
+use Icecave\Dialekt\AST\ExpressionInterface;
+use Icecave\Dialekt\AST\LogicalAnd;
+use Icecave\Dialekt\AST\LogicalNot;
+use Icecave\Dialekt\AST\LogicalOr;
+use Icecave\Dialekt\AST\Pattern;
+use Icecave\Dialekt\AST\PatternLiteral;
+use Icecave\Dialekt\AST\PatternWildcard;
+use Icecave\Dialekt\AST\Tag;
 use Icecave\Dialekt\Parser\Exception\ParseException;
 
 class Parser implements ParserInterface
 {
+    const DEFAULT_WILDCARD = '*';
+
+    /**
+     * @param string              $wildcardString     The string to use as a wildcard placeholder.
+     * @param boolean             $logicalOrByDefault True if the default operator should be OR, rather than AND.
+     * @param LexerInterface|null $lexer
+     */
     public function __construct(
+        $wildcardString = null,
         $logicalOrByDefault = false,
         LexerInterface $lexer = null
     ) {
+        if (null === $wildcardString) {
+            $wildcardString = self::DEFAULT_WILDCARD;
+        }
+
         if (null === $lexer) {
             $lexer = new Lexer;
         }
 
+        $this->wildcardString = $wildcardString;
         $this->logicalOrByDefault = $logicalOrByDefault;
         $this->lexer = $lexer;
     }
@@ -72,10 +87,10 @@ class Parser implements ParserInterface
             return $this->parseLogicalNot($tokens);
         } elseif (Token::OPEN_BRACKET === $token->type) {
             return $this->parseNestedExpression($tokens);
-        } elseif (false === strpos($token->value, '*')) {
+        } elseif (false === strpos($token->value, $this->wildcardString)) {
             return $this->parseTag($tokens);
         } else {
-            return $this->parseWildcard($tokens);
+            return $this->parsePattern($tokens);
         }
     }
 
@@ -83,26 +98,35 @@ class Parser implements ParserInterface
     {
         $token = current($tokens);
 
-        if (!preg_match('/^[a-z\d]+(-[a-z\d]+)*$/i', $token->value)) {
-            throw new ParseException('Invalid tag: "' . $token->value . '".');
-        }
-
         next($tokens);
 
         return new Tag($token->value);
     }
 
-    private function parseWildcard(array &$tokens)
+    private function parsePattern(array &$tokens)
     {
         $token = current($tokens);
 
-        if (!preg_match('/^[a-z0-9\*]+(-[a-z0-9\*]+)*$/i', $token->value)) {
-            throw new ParseException('Invalid wildcard: "' . $token->value . '".');
-        }
-
         next($tokens);
 
-        return new Wildcard($token->value);
+        $parts = preg_split(
+            '/(' . preg_quote($this->wildcardString, '/') . ')/',
+            $token->value,
+            -1,
+            PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY
+        );
+
+        $expression = new Pattern;
+
+        foreach ($parts as $value) {
+            if ($this->wildcardString === $value) {
+                $expression->add(new PatternWildcard);
+            } else {
+                $expression->add(new PatternLiteral($value));
+            }
+        }
+
+        return $expression;
     }
 
     private function parseNestedExpression(array &$tokens)
@@ -139,7 +163,7 @@ class Parser implements ParserInterface
             // Parse the operator and determine whether or not it's explicit ...
             list($operator, $isExplicit) = $this->parseOperator($tokens);
 
-            $precedence = $this->operatorPrecedence[$operator];
+            $precedence = self::$operatorPrecedence[$operator];
 
             // Abort if the operator's precedence is less than what we're looking for ...
             if ($precedence < $minimumPrecedence) {
@@ -158,7 +182,7 @@ class Parser implements ParserInterface
             // expression already being parsed ...
             list($nextOperator) = $this->parseOperator($tokens);
 
-            if ($precedence < $this->operatorPrecedence[$nextOperator]) {
+            if ($precedence < self::$operatorPrecedence[$nextOperator]) {
                 $rightExpression = $this->parseCompoundExpression(
                     $tokens,
                     $rightExpression,
@@ -167,7 +191,7 @@ class Parser implements ParserInterface
             }
 
             // Combine the parsed expression with the existing expression ...
-            $operatorClass = $this->operatorClasses[$operator];
+            $operatorClass = self::$operatorClasses[$operator];
 
             // Collapse the expression into an existing expression of the same type ...
             if ($allowCollapse && $leftExpression instanceof $operatorClass) {
@@ -250,17 +274,18 @@ class Parser implements ParserInterface
         return implode(', ', $types) . ' or ' . $lastType;
     }
 
-    private $lexer;
-    private $logicalOrByDefault;
-
-    private $operatorClasses = array(
-        Token::LOGICAL_AND => 'Icecave\Dialekt\Expression\LogicalAnd',
-        Token::LOGICAL_OR  => 'Icecave\Dialekt\Expression\LogicalOr',
+    private static $operatorClasses = array(
+        Token::LOGICAL_AND => 'Icecave\Dialekt\AST\LogicalAnd',
+        Token::LOGICAL_OR  => 'Icecave\Dialekt\AST\LogicalOr',
     );
 
-    private $operatorPrecedence = array(
+    private static $operatorPrecedence = array(
         Token::LOGICAL_AND => 1,
         Token::LOGICAL_OR  => 0,
         null               => -1,
     );
+
+    private $wildcardString;
+    private $lexer;
+    private $logicalOrByDefault;
 }

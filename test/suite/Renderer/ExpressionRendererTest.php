@@ -1,20 +1,22 @@
 <?php
 namespace Icecave\Dialekt\Renderer;
 
-use Icecave\Dialekt\Expression\EmptyExpression;
-use Icecave\Dialekt\Expression\LogicalAnd;
-use Icecave\Dialekt\Expression\LogicalNot;
-use Icecave\Dialekt\Expression\LogicalOr;
-use Icecave\Dialekt\Expression\Tag;
-use Icecave\Dialekt\Expression\Wildcard;
+use Icecave\Dialekt\AST\EmptyExpression;
+use Icecave\Dialekt\AST\LogicalAnd;
+use Icecave\Dialekt\AST\LogicalNot;
+use Icecave\Dialekt\AST\LogicalOr;
+use Icecave\Dialekt\AST\Pattern;
+use Icecave\Dialekt\AST\PatternLiteral;
+use Icecave\Dialekt\AST\PatternWildcard;
+use Icecave\Dialekt\AST\Tag;
 
 use PHPUnit_Framework_TestCase;
 
-class RendererTest extends PHPUnit_Framework_TestCase
+class ExpressionRendererTest extends PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
-        $this->renderer = new Renderer;
+        $this->renderer = new ExpressionRenderer;
     }
 
     /**
@@ -58,13 +60,19 @@ class RendererTest extends PHPUnit_Framework_TestCase
                 new Tag('foo bar'),
                 '"foo bar"',
             ),
-            'wildcard' => array(
-                new Wildcard('foo*'),
+            'pattern' => array(
+                new Pattern(
+                    new PatternLiteral('foo'),
+                    new PatternWildcard
+                ),
                 'foo*',
             ),
-            'escaped wildcard' => array(
-                new Tag('f\\o"o*'),
-                '"f\\\\o\\"o*"',
+            'escaped pattern' => array(
+                new Pattern(
+                    new PatternLiteral('foo"'),
+                    new PatternWildcard
+                ),
+                '"foo\\"*"',
             ),
             'logical and' => array(
                 new LogicalAnd(

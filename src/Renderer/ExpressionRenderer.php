@@ -6,18 +6,31 @@ use Icecave\Dialekt\AST\ExpressionInterface;
 use Icecave\Dialekt\AST\LogicalAnd;
 use Icecave\Dialekt\AST\LogicalNot;
 use Icecave\Dialekt\AST\LogicalOr;
-use Icecave\Dialekt\AST\NodeInterface;
 use Icecave\Dialekt\AST\Pattern;
 use Icecave\Dialekt\AST\PatternLiteral;
 use Icecave\Dialekt\AST\PatternWildcard;
 use Icecave\Dialekt\AST\Tag;
 use Icecave\Dialekt\AST\VisitorInterface;
+use Icecave\Dialekt\Parser\Parser;
+use Icecave\Dialekt\Renderer\Expression\RenderException;
 
 /**
- * Render an AST expression to a string representing the tree structure.
+ * Renders an AST expression to an expression string.
  */
-class TreeRenderer implements RendererInterface, VisitorInterface
+class ExpressionRenderer implements RendererInterface, VisitorInterface
 {
+    /**
+     * @param string $wildcardString The string to use as a wildcard placeholder.
+     */
+    public function __construct($wildcardString = null)
+    {
+        if (null === $wildcardString) {
+            $wildcardString = Parser::DEFAULT_WILDCARD;
+        }
+
+        $this->wildcardString = $wildcardString;
+    }
+
     /**
      * Render an expression to a string.
      *
@@ -41,7 +54,13 @@ class TreeRenderer implements RendererInterface, VisitorInterface
      */
     public function visitLogicalAnd(LogicalAnd $node)
     {
-        return 'AND' . PHP_EOL . $this->renderChildren($node);
+        $expressions = array();
+
+        foreach ($node->children() as $n) {
+            $expressions[] = $n->accept($this);
+        }
+
+        return '(' . implode(' AND ', $expressions) . ')';
     }
 
     /**
@@ -55,7 +74,13 @@ class TreeRenderer implements RendererInterface, VisitorInterface
      */
     public function visitLogicalOr(LogicalOr $node)
     {
-        return 'OR' . PHP_EOL . $this->renderChildren($node);
+        $expressions = array();
+
+        foreach ($node->children() as $n) {
+            $expressions[] = $n->accept($this);
+        }
+
+        return '(' . implode(' OR ', $expressions) . ')';
     }
 
     /**
@@ -69,9 +94,7 @@ class TreeRenderer implements RendererInterface, VisitorInterface
      */
     public function visitLogicalNot(LogicalNot $node)
     {
-        $child = $node->child()->accept($this);
-
-        return 'NOT ' . PHP_EOL . $this->indent('- ' . $child);
+        return 'NOT ' . $node->child()->accept($this);
     }
 
     /**
@@ -85,7 +108,7 @@ class TreeRenderer implements RendererInterface, VisitorInterface
      */
     public function visitTag(Tag $node)
     {
-        return 'TAG ' . json_encode($node->name());
+        return $this->escapeString($node->name());
     }
 
     /**
@@ -99,7 +122,13 @@ class TreeRenderer implements RendererInterface, VisitorInterface
      */
     public function visitPattern(Pattern $node)
     {
-        return 'PATTERN' . PHP_EOL . $this->renderChildren($node);
+        $string = '';
+
+        foreach ($node->children() as $n) {
+            $string .= $n->accept($this);
+        }
+
+        return $this->escapeString($string);
     }
 
     /**
@@ -113,7 +142,17 @@ class TreeRenderer implements RendererInterface, VisitorInterface
      */
     public function visitPatternLiteral(PatternLiteral $node)
     {
-        return 'LITERAL ' . json_encode($node->string());
+        if (false === strpos($node->string(), $this->wildcardString)) {
+            return $node->string();
+        }
+
+        throw new RenderException(
+            sprintf(
+                'The pattern literal "%s" contains the wildcard string "%s".',
+                $node->string(),
+                $this->wildcardString
+            )
+        );
     }
 
     /**
@@ -127,7 +166,7 @@ class TreeRenderer implements RendererInterface, VisitorInterface
      */
     public function visitPatternWildcard(PatternWildcard $node)
     {
-        return 'WILDCARD';
+        return $this->wildcardString;
     }
 
     /**
@@ -141,26 +180,34 @@ class TreeRenderer implements RendererInterface, VisitorInterface
      */
     public function visitEmptyExpression(EmptyExpression $node)
     {
-        return 'EMPTY';
+        return 'NOT ' . $this->wildcardString;
     }
 
-    private function renderChildren(NodeInterface $node)
+    private function escapeString($string)
     {
-        $output = '';
-
-        foreach ($node->children() as $n) {
-            $output .= $this->indent(
-                '- ' . $n->accept($this)
-            ) . PHP_EOL;
+        if (
+            0 === strcasecmp('and', $string)
+            || 0 === strcasecmp('or', $string)
+            || 0 === strcasecmp('not', $string)
+        ) {
+            return '"' . $string . '"';
         }
 
-        return rtrim($output);
+        $count = 0;
+        $string = preg_replace(
+            '/[\(\)"\\\\]/',
+            '\\\\$0',
+            $string,
+            -1,
+            $count
+        );
+
+        if ($count || preg_match('/\s/', $string)) {
+            return '"' . $string . '"';
+        }
+
+        return $string;
     }
 
-    private function indent($string)
-    {
-        return '  ' . str_replace(PHP_EOL, PHP_EOL . '  ', $string);
-    }
-
-    private $indentLevel = 0;
+    private $wildcardString;
 }

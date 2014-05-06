@@ -1,14 +1,16 @@
 <?php
 namespace Icecave\Dialekt\Parser;
 
-use Icecave\Dialekt\Expression\EmptyExpression;
-use Icecave\Dialekt\Expression\LogicalAnd;
-use Icecave\Dialekt\Expression\LogicalNot;
-use Icecave\Dialekt\Expression\LogicalOr;
-use Icecave\Dialekt\Expression\Tag;
-use Icecave\Dialekt\Expression\Wildcard;
+use Icecave\Dialekt\AST\EmptyExpression;
+use Icecave\Dialekt\AST\LogicalAnd;
+use Icecave\Dialekt\AST\LogicalNot;
+use Icecave\Dialekt\AST\LogicalOr;
+use Icecave\Dialekt\AST\Pattern;
+use Icecave\Dialekt\AST\PatternLiteral;
+use Icecave\Dialekt\AST\PatternWildcard;
+use Icecave\Dialekt\AST\Tag;
 use Icecave\Dialekt\Parser\Exception\ParseException;
-use Icecave\Dialekt\Renderer\Renderer;
+use Icecave\Dialekt\Renderer\ExpressionRenderer;
 
 use PHPUnit_Framework_TestCase;
 
@@ -17,7 +19,7 @@ class ParserTest extends PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->parser = new Parser;
-        $this->renderer = new Renderer;
+        $this->renderer = new ExpressionRenderer;
     }
 
     /**
@@ -52,7 +54,7 @@ class ParserTest extends PHPUnit_Framework_TestCase
 
     public function testParseUsingLogicalOrAsDefaultOperator()
     {
-        $this->parser = new Parser(true);
+        $this->parser = new Parser(null, true);
 
         $result = $this->parser->parse('a and b c and d');
 
@@ -75,7 +77,10 @@ class ParserTest extends PHPUnit_Framework_TestCase
             ),
             'tag pattern' => array(
                 'a*',
-                new Wildcard('a*'),
+                new Pattern(
+                    new PatternLiteral('a'),
+                    new PatternWildcard
+                ),
             ),
             'multiple tags' => array(
                 'a b c',
@@ -256,15 +261,7 @@ class ParserTest extends PHPUnit_Framework_TestCase
             'mismatched braces 2' => array(
                 'a)',
                 'Unexpected close bracket, expected end of input.'
-            ),
-            'invalid tag' => array(
-                '-foo-',
-                'Invalid tag: "-foo-".'
-            ),
-            'invalid wildcard' => array(
-                '-foo*-',
-                'Invalid wildcard: "-foo*-".'
-            ),
+            )
         );
     }
 }

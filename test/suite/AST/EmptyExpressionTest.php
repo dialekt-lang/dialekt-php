@@ -1,5 +1,5 @@
 <?php
-namespace Icecave\Dialekt\Expression;
+namespace Icecave\Dialekt\AST;
 
 use Phake;
 use PHPUnit_Framework_TestCase;
@@ -13,7 +13,7 @@ class EmptyExpressionTest extends PHPUnit_Framework_TestCase
 
     public function testAccept()
     {
-        $visitor = Phake::mock('Icecave\Dialekt\Expression\VisitorInterface');
+        $visitor = Phake::mock('Icecave\Dialekt\AST\VisitorInterface');
 
         Phake::when($visitor)
             ->visitEmptyExpression(Phake::anyParameters())
