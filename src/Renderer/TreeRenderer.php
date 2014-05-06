@@ -71,7 +71,7 @@ class TreeRenderer implements RendererInterface, VisitorInterface
     {
         $child = $node->child()->accept($this);
 
-        return 'NOT ' . PHP_EOL . $this->indent('- ' . $child);
+        return 'NOT' . PHP_EOL . $this->indent('- ' . $child);
     }
 
     /**

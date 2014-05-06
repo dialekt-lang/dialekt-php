@@ -29,6 +29,20 @@ class ExpressionRendererTest extends PHPUnit_Framework_TestCase
         $this->assertSame($expectedString, $string);
     }
 
+    public function testRenderFailureWithWildcardInPatternLiteral()
+    {
+        $this->setExpectedException(
+            'Icecave\Dialekt\Renderer\Exception\RenderException',
+            'The pattern literal "foo*" contains the wildcard string "*".'
+        );
+
+        $this->renderer->render(
+            new Pattern(
+                new PatternLiteral('foo*')
+            )
+        );
+    }
+
     public function renderTestVectors()
     {
         return array(

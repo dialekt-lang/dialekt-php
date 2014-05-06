@@ -12,7 +12,7 @@ use Icecave\Dialekt\AST\PatternWildcard;
 use Icecave\Dialekt\AST\Tag;
 use Icecave\Dialekt\AST\VisitorInterface;
 use Icecave\Dialekt\Parser\Parser;
-use Icecave\Dialekt\Renderer\Expression\RenderException;
+use Icecave\Dialekt\Renderer\Exception\RenderException;
 
 /**
  * Renders an AST expression to an expression string.
