@@ -10,6 +10,7 @@ in converting text input into an appropriate format, such as an SQL query.
 
 * Install via [Composer](http://getcomposer.org) package [icecave/dialekt](https://packagist.org/packages/icecave/dialekt)
 * Read the [API documentation](http://icecavestudios.github.io/dialekt/artifacts/documentation/api/)
+* Try the [online demo](http://dialekt.icecave.com.au)
 
 ## Syntax
 
