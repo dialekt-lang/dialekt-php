@@ -12,8 +12,7 @@
         }
     ],
     "require": {
-        "php": ">=5.3",
-        "icecave/isolator": "~2"
+        "php": ">=5.3"
     },
     "require-dev": {
         "icecave/archer": "~1"
