@@ -1,7 +1,16 @@
 {
     "name": "icecave/dialekt",
-    "description": "This package needs a description!",
-    "keywords": [],
+    "description": "A very simple language for representing boolean expressions.",
+    "keywords": [
+        "tag",
+        "label",
+        "expression",
+        "parser",
+        "search",
+        "boolean",
+        "logic",
+        "logical"
+    ],
     "homepage": "https://github.com/IcecaveStudios/dialekt",
     "license": "MIT",
     "authors": [

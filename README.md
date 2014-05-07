@@ -4,7 +4,7 @@
 [![Test Coverage]](https://coveralls.io/r/IcecaveStudios/dialekt?branch=develop)
 [![SemVer]](http://semver.org)
 
-**Dialekt** is a very simple language designed to represent boolean expressions such as might be used in a search
+**Dialekt** is a very simple language for representing boolean expressions such as might be used in a search
 implementation. This package provides a parser and syntax-tree representation that can be used as an intermediate step
 in converting text input into an appropriate format, such as an SQL query.
 
