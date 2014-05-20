@@ -12,104 +12,33 @@ use Icecave\Dialekt\AST\PatternWildcard;
 use Icecave\Dialekt\AST\Tag;
 use Icecave\Dialekt\AST\VisitorInterface;
 
-/**
- * Match parsed expressions against string tags.
- */
-class Evaluator implements VisitorInterface
+class Evaluator implements EvaluatorInterface, VisitorInterface
 {
     /**
-     * @param boolean $caseSensitive                    True if tag matching should be case-sensitive; otherwise, false.
-     * @param boolean $emptyExpressionMatchesEverything True if an empty expression matches all tags; or false to match none.
+     * @param boolean $caseSensitive   True if tag matching should be case-sensitive; otherwise, false.
+     * @param boolean $emptyIsWildcard True if an empty expression matches all tags; or false to match none.
      */
-    public function __construct(
-        $caseSensitive = false,
-        $emptyExpressionMatchesEverything = false
-    ) {
+    public function __construct($caseSensitive = false, $emptyIsWildcard = false)
+    {
         $this->caseSensitive = $caseSensitive;
-        $this->emptyExpressionMatchesEverything = $emptyExpressionMatchesEverything;
+        $this->emptyIsWildcard = $emptyIsWildcard;
     }
 
     /**
-     * Check if an expression evaluates to true for a single tag.
+     * Evaluate an expression against a single tag.
      *
      * @param ExpressionInterface $expression The expression to evaluate.
-     * @param string              $tag        The tag to match.
+     * @param string              $tag        The tag to evaluate against.
      *
      * @return boolean True if the expression matches the given tag; otherwise, false.
      */
-    public function match(ExpressionInterface $expression, $tag)
+    public function evaluate(ExpressionInterface $expression, $tags)
     {
-        $this->currentTag = $tag;
+        $this->tags = $tags;
         $result = $expression->accept($this);
-        $this->currentTag = null;
+        $this->tags = null;
 
         return $result;
-    }
-
-    /**
-     * Check if an expression evaluates to true for all of the given tags.
-     *
-     * @param ExpressionInterface $expression The expression to evaluate.
-     * @param mixed<string>       $tags       The tags to match.
-     *
-     * @return boolean True if the expression matches all of the given tags; otherwise, false.
-     */
-    public function matchAll(ExpressionInterface $expression, $tags)
-    {
-        foreach ($tags as $tag) {
-            if (!$this->match($expression, $tag)) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * Check if an expression evaluates to true for any of the given tags.
-     *
-     * @param ExpressionInterface $expression The expression to evaluate.
-     * @param mixed<string>       $tags       The tags to match.
-     *
-     * @return boolean True if the expression matches any of the given tags; otherwise, false.
-     */
-    public function matchAny(ExpressionInterface $expression, $tags)
-    {
-        foreach ($tags as $tag) {
-            if ($this->match($expression, $tag)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Partition a traversible set of tags into two arrays of matching and
-     * non-matching tags based on an expression.
-     *
-     * @param ExpressionInterface $expression The expression used to partition the array.
-     * @param mixed<string>       $tags       The array of tags to partition.
-     *
-     * @return tuple<array,array> A 2-tuple containing arrays of the matched and unmatched tags.
-     */
-    public function partition(ExpressionInterface $expression, $tags)
-    {
-        $matched = array();
-        $notMatched = array();
-
-        foreach ($tags as $tag) {
-            if ($this->match($expression, $tag)) {
-                $matched[] = $tag;
-            } else {
-                $notMatched[] = $tag;
-            }
-        }
-
-        return array(
-            $matched,
-            $notMatched,
-        );
     }
 
     /**
@@ -178,10 +107,19 @@ class Evaluator implements VisitorInterface
     public function visitTag(Tag $node)
     {
         if ($this->caseSensitive) {
-            return $this->currentTag === $node->name();
+            return in_array(
+                $node->name(),
+                $this->tags
+            );
         }
 
-        return 0 === strcasecmp($this->currentTag, $node->name());
+        foreach ($this->tags as $tag) {
+            if (0 === strcasecmp($node->name(), $tag)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -207,13 +145,17 @@ class Evaluator implements VisitorInterface
             $pattern .= 'i';
         }
 
-        return 0 !== preg_match($pattern, $this->currentTag);
+        foreach ($this->tags as $tag) {
+            if (preg_match($pattern, $tag)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
      * Visit a PatternLiteral node.
-     *
-     * @internal
      *
      * @param PatternLiteral $node The node to visit.
      *
@@ -226,8 +168,6 @@ class Evaluator implements VisitorInterface
 
     /**
      * Visit a PatternWildcard node.
-     *
-     * @internal
      *
      * @param PatternWildcard $node The node to visit.
      *
@@ -249,9 +189,10 @@ class Evaluator implements VisitorInterface
      */
     public function visitEmptyExpression(EmptyExpression $node)
     {
-        return $this->emptyExpressionMatchesEverything;
+        return $this->emptyIsWildcard;
     }
 
-    private $currentTag;
-    private $emptyExpressionMatchesEverything;
+    private $tags;
+    private $caseSensitive;
+    private $emptyIsWildcard;
 }

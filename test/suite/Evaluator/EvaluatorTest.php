@@ -10,25 +10,23 @@ use Icecave\Dialekt\AST\Pattern;
 use Icecave\Dialekt\AST\PatternLiteral;
 use Icecave\Dialekt\AST\PatternWildcard;
 use Icecave\Dialekt\AST\Tag;
-
 use PHPUnit_Framework_TestCase;
 
 class EvaluatorTest extends PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
-        $this->evaluator = new Evaluator;
+        $this->visitor = new Evaluator;
     }
 
     /**
-     * @dataProvider matchTestVectors
+     * @dataProvider evaluateTestVectors
      */
-    public function testMatch(ExpressionInterface $expression, $tag, $expected)
+    public function testEvaluate(ExpressionInterface $expression, $tags, $expected)
     {
-
         $this->assertSame(
             $expected,
-            $this->evaluator->match($expression, $tag)
+            $this->visitor->evaluate($expression, $tags)
         );
     }
 
@@ -37,10 +35,20 @@ class EvaluatorTest extends PHPUnit_Framework_TestCase
         $this->evaluator = new Evaluator(true);
         $expression = new Tag('foo');
 
-        $this->assertTrue($this->evaluator->match($expression, 'foo'));
-        $this->assertFalse($this->evaluator->match($expression, 'FOO'));
-    }
+        $this->assertTrue(
+            $this->evaluator->evaluate(
+                $expression,
+                array('foo')
+            )
+        );
 
+        $this->assertFalse(
+            $this->evaluator->evaluate(
+                $expression,
+                array('FOO')
+            )
+        );
+    }
     public function testMatchPatternCaseSensitive()
     {
         $this->evaluator = new Evaluator(true);
@@ -49,168 +57,203 @@ class EvaluatorTest extends PHPUnit_Framework_TestCase
             new PatternWildcard
         );
 
-        $this->assertTrue($this->evaluator->match($expression, 'foobar'));
-        $this->assertFalse($this->evaluator->match($expression, 'FOOBAR'));
-    }
-
-    public function testMatchEmptyExpressionWithMatchAll()
-    {
-        $this->evaluator = new Evaluator(false, true);
-
-        $this->assertTrue($this->evaluator->match(new EmptyExpression, 'foo'));
-    }
-
-    public function testMatchAll()
-    {
-        $expression = new LogicalOr(
-            new Tag('foo'),
-            new Tag('bar')
-        );
-
-        $this->assertTrue($this->evaluator->matchAll($expression, array('foo', 'bar')));
-        $this->assertFalse($this->evaluator->matchAll($expression, array('foo', 'spam')));
-    }
-
-    public function testMatchAny()
-    {
-        $expression = new LogicalOr(
-            new Tag('foo'),
-            new Tag('bar')
-        );
-
-        $this->assertTrue($this->evaluator->matchAny($expression, array('foo', 'bar')));
-        $this->assertTrue($this->evaluator->matchAny($expression, array('foo', 'spam')));
-        $this->assertFalse($this->evaluator->matchAny($expression, array('doom', 'spam')));
-    }
-
-    public function testPartition()
-    {
-        $expression = new LogicalOr(
-            new Tag('foo'),
-            new Tag('bar')
-        );
-
-        list($matched, $notMatched) = $this->evaluator->partition(
-            $expression,
-            array(
-                'spam',
-                'foo',
-                'doom',
-                'bar'
+        $this->assertTrue(
+            $this->evaluator->evaluate(
+                $expression,
+                array('foobar')
             )
         );
 
-        $this->assertEquals(
-            array('foo', 'bar'),
-            $matched
-        );
-
-        $this->assertEquals(
-            array('spam', 'doom'),
-            $notMatched
+        $this->assertFalse(
+            $this->evaluator->evaluate(
+                $expression,
+                array('FOOBAR')
+            )
         );
     }
 
-    public function matchTestVectors()
+    public function testMatchEmptyExpressionEmptyAsWildcard()
+    {
+        $this->evaluator = new Evaluator(false, true);
+
+        $this->assertTrue(
+            $this->evaluator->evaluate(
+                new EmptyExpression,
+                array('foo')
+            )
+        );
+    }
+
+    public function evaluateTestVectors()
     {
         return array(
-            'empty' => array(
+            array(
                 new EmptyExpression,
-                'foo',
-                false
+                array('foo'),
+                false,
             ),
-            'tag match' => array(
+            array(
                 new Tag('foo'),
-                'FoO', // differing case
-                true
+                array('foo'),
+                true,
             ),
-            'tag no-match' => array(
+            array(
                 new Tag('foo'),
-                'bar',
-                false
+                array('bar'),
+                false,
             ),
-            'pattern match' => array(
-                new Pattern(
-                    new PatternWildcard,
-                    new PatternLiteral('foo'),
-                    new PatternWildcard
-                ),
-                '1FoO2', // differing case
-                true
+            array(
+                new Tag('foo'),
+                array('foo', 'bar'),
+                true,
             ),
-            'pattern no-match' => array(
+            array(
                 new Pattern(
                     new PatternLiteral('foo'),
                     new PatternWildcard
                 ),
-                'barfoospam',
-                false
+                array('foobar'),
+                true,
             ),
-            'logical and match' => array(
+            array(
                 new LogicalAnd(
-                    new Pattern(
-                        new PatternLiteral('foo'),
-                        new PatternWildcard
-                    ),
-                    new Pattern(
-                        new PatternWildcard,
-                        new PatternLiteral('bar')
-                    )
+                    new Tag('foo'),
+                    new Tag('bar')
                 ),
-                'foobar',
-                true
+                array('foo'),
+                false,
             ),
-            'logical and no-match' => array(
+            array(
                 new LogicalAnd(
-                    new Pattern(
-                        new PatternLiteral('foo'),
-                        new PatternWildcard
-                    ),
-                    new Pattern(
-                        new PatternWildcard,
-                        new PatternLiteral('bar')
-                    )
+                    new Tag('foo'),
+                    new Tag('bar')
                 ),
-                'foo',
-                false
+                array('bar'),
+                false,
             ),
-            'logical or match 1' => array(
+            array(
+                new LogicalAnd(
+                    new Tag('foo'),
+                    new Tag('bar')
+                ),
+                array('foo', 'bar'),
+                true,
+            ),
+            array(
+                new LogicalAnd(
+                    new Tag('foo'),
+                    new Tag('bar')
+                ),
+                array('foo', 'bar', 'spam'),
+                true,
+            ),
+            array(
+                new LogicalAnd(
+                    new Tag('foo'),
+                    new Tag('bar')
+                ),
+                array('foo', 'spam'),
+                false,
+            ),
+            array(
                 new LogicalOr(
                     new Tag('foo'),
                     new Tag('bar')
                 ),
-                'foo',
-                true
+                array('foo'),
+                true,
             ),
-            'logical or match 2' => array(
+            array(
                 new LogicalOr(
                     new Tag('foo'),
                     new Tag('bar')
                 ),
-                'bar',
-                true
+                array('bar'),
+                true,
             ),
-            'logical or no-match' => array(
+            array(
                 new LogicalOr(
                     new Tag('foo'),
                     new Tag('bar')
                 ),
-                'spam',
-                false
+                array('foo', 'spam'),
+                true,
             ),
-            'logical not match' => array(
+            array(
+                new LogicalOr(
+                    new Tag('foo'),
+                    new Tag('bar')
+                ),
+                array('spam'),
+                false,
+            ),
+            array(
                 new LogicalNot(
                     new Tag('foo')
                 ),
-                'bar',
-                true
+                array('foo'),
+                false,
             ),
-            'logical not no-match' => array(
+            array(
                 new LogicalNot(
                     new Tag('foo')
                 ),
-                'foo',
-                false
+                array('foo', 'bar'),
+                false,
+            ),
+            array(
+                new LogicalNot(
+                    new Tag('foo')
+                ),
+                array('bar'),
+                true,
+            ),
+            array(
+                new LogicalNot(
+                    new Tag('foo')
+                ),
+                array('bar', 'spam'),
+                true,
+            ),
+            array(
+                new LogicalAnd(
+                    new Tag('foo'),
+                    new LogicalNot(
+                        new Tag('bar')
+                    )
+                ),
+                array('foo'),
+                true,
+            ),
+            array(
+                new LogicalAnd(
+                    new Tag('foo'),
+                    new LogicalNot(
+                        new Tag('bar')
+                    )
+                ),
+                array('foo', 'spam'),
+                true,
+            ),
+            array(
+                new LogicalAnd(
+                    new Tag('foo'),
+                    new LogicalNot(
+                        new Tag('bar')
+                    )
+                ),
+                array('foo', 'bar', 'spam'),
+                false,
+            ),
+            array(
+                new LogicalAnd(
+                    new Tag('foo'),
+                    new LogicalNot(
+                        new Tag('bar')
+                    )
+                ),
+                array('spam'),
+                false,
             ),
         );
     }
