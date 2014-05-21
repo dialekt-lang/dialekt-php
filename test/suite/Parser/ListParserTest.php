@@ -18,7 +18,7 @@ class ListParserTest extends PHPUnit_Framework_TestCase
     public function testParseWithEmptyExpression()
     {
         $this->assertInstanceOf(
-            EmptyExpression::CLASS,
+            'Icecave\Dialekt\AST\EmptyExpression',
             $this->parser->parse('')
         );
     }
@@ -45,7 +45,7 @@ class ListParserTest extends PHPUnit_Framework_TestCase
     public function testParseFailureWithNonString()
     {
         $this->setExpectedException(
-            ParseException::CLASS,
+            'Icecave\Dialekt\Parser\Exception\ParseException',
             'Unexpected AND operator, expected tag or end of input.'
         );
 
@@ -55,7 +55,7 @@ class ListParserTest extends PHPUnit_Framework_TestCase
     public function testParseFailureWithWildcardCharacter()
     {
         $this->setExpectedException(
-            ParseException::CLASS,
+            'Icecave\Dialekt\Parser\Exception\ParseException',
             'Unexpected wildcard string "*", in tag "foo*".'
         );
 
