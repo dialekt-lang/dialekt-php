@@ -14,11 +14,11 @@ use Icecave\Dialekt\Renderer\ExpressionRenderer;
 
 use PHPUnit_Framework_TestCase;
 
-class ParserTest extends PHPUnit_Framework_TestCase
+class ExpressionParserTest extends PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
-        $this->parser = new Parser;
+        $this->parser = new ExpressionParser;
         $this->renderer = new ExpressionRenderer;
     }
 
@@ -54,7 +54,7 @@ class ParserTest extends PHPUnit_Framework_TestCase
 
     public function testParseUsingLogicalOrAsDefaultOperator()
     {
-        $this->parser = new Parser(null, true);
+        $this->parser = new ExpressionParser(null, true);
 
         $result = $this->parser->parse('a and b c and d');
 

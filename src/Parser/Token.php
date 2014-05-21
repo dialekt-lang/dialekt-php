@@ -5,6 +5,8 @@ use LogicException;
 
 final class Token
 {
+    const WILDCARD_CHARACTER = '*';
+
     const LOGICAL_AND   = 1;
     const LOGICAL_OR    = 2;
     const LOGICAL_NOT   = 3;

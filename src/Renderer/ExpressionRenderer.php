@@ -12,6 +12,7 @@ use Icecave\Dialekt\AST\PatternWildcard;
 use Icecave\Dialekt\AST\Tag;
 use Icecave\Dialekt\AST\VisitorInterface;
 use Icecave\Dialekt\Parser\Parser;
+use Icecave\Dialekt\Parser\Token;
 use Icecave\Dialekt\Renderer\Exception\RenderException;
 
 /**
@@ -25,7 +26,7 @@ class ExpressionRenderer implements RendererInterface, VisitorInterface
     public function __construct($wildcardString = null)
     {
         if (null === $wildcardString) {
-            $wildcardString = Parser::DEFAULT_WILDCARD;
+            $wildcardString = Token::WILDCARD_CHARACTER;
         }
 
         $this->wildcardString = $wildcardString;

@@ -12,10 +12,8 @@ use Icecave\Dialekt\AST\PatternWildcard;
 use Icecave\Dialekt\AST\Tag;
 use Icecave\Dialekt\Parser\Exception\ParseException;
 
-class Parser implements ParserInterface
+class ExpressionParser implements ParserInterface
 {
-    const DEFAULT_WILDCARD = '*';
-
     /**
      * @param string              $wildcardString     The string to use as a wildcard placeholder.
      * @param boolean             $logicalOrByDefault True if the default operator should be OR, rather than AND.
@@ -27,7 +25,7 @@ class Parser implements ParserInterface
         LexerInterface $lexer = null
     ) {
         if (null === $wildcardString) {
-            $wildcardString = self::DEFAULT_WILDCARD;
+            $wildcardString = Token::WILDCARD_CHARACTER;
         }
 
         if (null === $lexer) {
@@ -51,19 +49,19 @@ class Parser implements ParserInterface
     {
         $tokens = $this->lexer->lex($expression);
 
-        if ($tokens) {
-            $expression = $this->parseExpression($tokens);
-
-            if (null !== key($tokens)) {
-                throw new ParseException(
-                    'Unexpected ' . Token::typeDescription(current($tokens)->type) . ', expected end of input.'
-                );
-            }
-
-            return $expression;
+        if (!$tokens) {
+            return new EmptyExpression;
         }
 
-        return new EmptyExpression;
+        $expression = $this->parseExpression($tokens);
+
+        if (null !== key($tokens)) {
+            throw new ParseException(
+                'Unexpected ' . Token::typeDescription(current($tokens)->type) . ', expected end of input.'
+            );
+        }
+
+        return $expression;
     }
 
     private function parseExpression(array &$tokens)
