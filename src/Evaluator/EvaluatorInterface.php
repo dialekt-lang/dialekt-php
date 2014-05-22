@@ -17,7 +17,7 @@ interface EvaluatorInterface
      * @param ExpressionInterface $expression The expression to evaluate.
      * @param mixed<string>       $tags       The set of tags to evaluate against.
      *
-     * @return boolean
+     * @return EvaluationResult The result of the evaluation.
      */
     public function evaluate(ExpressionInterface $expression, $tags);
 }

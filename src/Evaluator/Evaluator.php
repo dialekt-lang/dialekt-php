@@ -25,18 +25,25 @@ class Evaluator implements EvaluatorInterface, VisitorInterface
     }
 
     /**
-     * Evaluate an expression against a single tag.
+     * Evaluate an expression against a set of tags.
      *
      * @param ExpressionInterface $expression The expression to evaluate.
-     * @param string              $tag        The tag to evaluate against.
+     * @param mixed<string>       $tags       The set of tags to evaluate against.
      *
-     * @return boolean True if the expression matches the given tag; otherwise, false.
+     * @return EvaluationResult The result of the evaluation.
      */
     public function evaluate(ExpressionInterface $expression, $tags)
     {
         $this->tags = $tags;
-        $result = $expression->accept($this);
+        $this->expressionResults = array();
+
+        $result = new EvaluationResult(
+            $expression->accept($this)->isMatch(),
+            $this->expressionResults
+        );
+
         $this->tags = null;
+        $this->expressionResults = null;
 
         return $result;
     }
@@ -52,13 +59,31 @@ class Evaluator implements EvaluatorInterface, VisitorInterface
      */
     public function visitLogicalAnd(LogicalAnd $node)
     {
+        $matchedTags = array();
+        $isMatch = true;
+
         foreach ($node->children() as $n) {
-            if (!$n->accept($this)) {
-                return false;
+            $result = $n->accept($this);
+
+            if (!$result->isMatch()) {
+                $isMatch = false;
+            }
+
+            foreach ($result->matchedTags() as $tag) {
+                $matchedTags[$tag] = true;
             }
         }
 
-        return true;
+        $matchedTags = array_keys($matchedTags);
+
+        return $this->expressionResults[] = new ExpressionResult(
+            $node,
+            $isMatch,
+            $matchedTags,
+            array_values(
+                array_diff($this->tags, $matchedTags)
+            )
+        );
     }
 
     /**
@@ -72,13 +97,31 @@ class Evaluator implements EvaluatorInterface, VisitorInterface
      */
     public function visitLogicalOr(LogicalOr $node)
     {
+        $matchedTags = array();
+        $isMatch = false;
+
         foreach ($node->children() as $n) {
-            if ($n->accept($this)) {
-                return true;
+            $result = $n->accept($this);
+
+            if ($result->isMatch()) {
+                $isMatch = true;
+            }
+
+            foreach ($result->matchedTags() as $tag) {
+                $matchedTags[$tag] = true;
             }
         }
 
-        return false;
+        $matchedTags = array_keys($matchedTags);
+
+        return $this->expressionResults[] = new ExpressionResult(
+            $node,
+            $isMatch,
+            $matchedTags,
+            array_values(
+                array_diff($this->tags, $matchedTags)
+            )
+        );
     }
 
     /**
@@ -92,7 +135,14 @@ class Evaluator implements EvaluatorInterface, VisitorInterface
      */
     public function visitLogicalNot(LogicalNot $node)
     {
-        return !$node->child()->accept($this);
+        $childResult = $node->child()->accept($this);
+
+        return $this->expressionResults[] = new ExpressionResult(
+            $node,
+            !$childResult->isMatch(),
+            $childResult->unmatchedTags(),
+            $childResult->matchedTags()
+        );
     }
 
     /**
@@ -107,19 +157,19 @@ class Evaluator implements EvaluatorInterface, VisitorInterface
     public function visitTag(Tag $node)
     {
         if ($this->caseSensitive) {
-            return in_array(
-                $node->name(),
-                $this->tags
-            );
+            $predicate = function ($tag) use ($node) {
+                return $node->name() === $tag;
+            };
+        } else {
+            $predicate = function ($tag) use ($node) {
+                return 0 === strcasecmp($node->name(), $tag);
+            };
         }
 
-        foreach ($this->tags as $tag) {
-            if (0 === strcasecmp($node->name(), $tag)) {
-                return true;
-            }
-        }
-
-        return false;
+        return $this->matchTags(
+            $node,
+            $predicate
+        );
     }
 
     /**
@@ -145,13 +195,12 @@ class Evaluator implements EvaluatorInterface, VisitorInterface
             $pattern .= 'i';
         }
 
-        foreach ($this->tags as $tag) {
-            if (preg_match($pattern, $tag)) {
-                return true;
+        return $this->matchTags(
+            $node,
+            function ($tag) use ($pattern) {
+                return preg_match($pattern, $tag);
             }
-        }
-
-        return false;
+        );
     }
 
     /**
@@ -189,10 +238,37 @@ class Evaluator implements EvaluatorInterface, VisitorInterface
      */
     public function visitEmptyExpression(EmptyExpression $node)
     {
-        return $this->emptyIsWildcard;
+        return $this->expressionResults[] = new ExpressionResult(
+            $node,
+            $this->emptyIsWildcard,
+            $this->emptyIsWildcard ? $this->tags : array(),
+            $this->emptyIsWildcard ? array() : $this->tags
+        );
     }
 
-    private $tags;
+    private function matchTags(ExpressionInterface $expression, $predicate)
+    {
+        $matchedTags = array();
+        $unmatchedTags = array();
+
+        foreach ($this->tags as $tag) {
+            if ($predicate($tag)) {
+                $matchedTags[] = $tag;
+            } else {
+                $unmatchedTags[] = $tag;
+            }
+        }
+
+        return $this->expressionResults[] = new ExpressionResult(
+            $expression,
+            count($matchedTags) > 0,
+            $matchedTags,
+            $unmatchedTags
+        );
+    }
+
     private $caseSensitive;
     private $emptyIsWildcard;
+    private $tags;
+    private $expressionResults;
 }
