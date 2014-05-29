@@ -3,6 +3,7 @@ namespace Icecave\Dialekt\Evaluator;
 
 use Icecave\Dialekt\AST\ExpressionInterface;
 use SplObjectStorage;
+use UnexpectedValueException;
 
 /**
  * The overall result of the evaluation of an expression.
@@ -10,8 +11,8 @@ use SplObjectStorage;
 class EvaluationResult
 {
     /**
-     * @param boolean $isMatch True if the expression matched the tag set; otherwise, false.
-     * @param array<ExpressionResult> The individual sub-expression results.
+     * @param boolean                 $isMatch           True if the expression matched the tag set; otherwise, false.
+     * @param array<ExpressionResult> $expressionResults The individual sub-expression results.
      */
     public function __construct($isMatch, array $expressionResults)
     {
@@ -38,9 +39,10 @@ class EvaluationResult
      *
      * @param ExpressionInterface $expression The expression for which the result is fetched.
      *
-     * @return ExpressionResult The result for the given expression.
+     * @return ExpressionResult         The result for the given expression.
+     * @throws UnexpectedValueException if there is no result for the given expression.
      */
-    public function expressionResult(ExpressionInterface $expression)
+    public function resultOf(ExpressionInterface $expression)
     {
         return $this->expressionResults[$expression];
     }
