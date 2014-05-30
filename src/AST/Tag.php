@@ -2,7 +2,7 @@
 namespace Icecave\Dialekt\AST;
 
 /**
- * Represents a literal tag spring in an expression.
+ * An AST node that represents a literal tag expression.
  */
 class Tag implements ExpressionInterface
 {

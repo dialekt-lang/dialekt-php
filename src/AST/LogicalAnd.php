@@ -2,7 +2,7 @@
 namespace Icecave\Dialekt\AST;
 
 /**
- * The logical AND operator.
+ * An AST node that represents the logical AND operator.
  */
 class LogicalAnd extends AbstractPolyadicOperator
 {

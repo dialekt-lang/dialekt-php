@@ -2,7 +2,7 @@
 namespace Icecave\Dialekt\AST;
 
 /**
- * The logical NOT operator.
+ * An AST node that represents the logical NOT operator.
  */
 class LogicalNot implements ExpressionInterface
 {
