@@ -4,8 +4,7 @@
 [![Test Coverage]](https://coveralls.io/r/IcecaveStudios/dialekt?branch=develop)
 [![SemVer]](http://semver.org)
 
-**Dialekt** is a very simple language for representing boolean expressions such as might be used in a search
-implementation.
+**Dialekt** is a very simple language for representing boolean expressions of the form often used by search engines.
 
 * Install via [Composer](http://getcomposer.org) package [icecave/dialekt](https://packagist.org/packages/icecave/dialekt)
 * Read the [API documentation](http://icecavestudios.github.io/dialekt/artifacts/documentation/api/)
@@ -51,8 +50,8 @@ thus the expression `foo bar baz` is equivalent to `foo AND bar AND baz`.
 Sub-expressions can be grouped using parenthesis to control evaluation order, as `baz` and `quux` have been in the
 example above.
 
-When parenthesis are not present, the `AND` operator has higher precedence than `OR` such that `foo AND bar OR baz` is
-equivalent to `(foo AND bar) OR baz`.
+When parenthesis are not present, the `AND` operator has higher precedence than `OR` such that `foo OR bar AND baz` is
+equivalent to `foo OR (bar AND baz)`.
 
 <!-- references -->
 [Build Status]: http://img.shields.io/travis/IcecaveStudios/dialekt/develop.svg

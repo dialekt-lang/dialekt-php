@@ -1,6 +1,6 @@
 {
     "name": "icecave/dialekt",
-    "description": "A very simple language for representing boolean expressions.",
+    "description": "A simple language for representing boolean expressions.",
     "keywords": [
         "tag",
         "label",
