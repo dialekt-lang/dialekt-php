@@ -57,4 +57,4 @@ equivalent to `foo OR (bar AND baz)`.
 <!-- references -->
 [Build Status]: http://img.shields.io/travis/IcecaveStudios/dialekt/develop.svg
 [Test Coverage]: http://img.shields.io/coveralls/IcecaveStudios/dialekt/develop.svg
-[SemVer]: http://img.shields.io/:semver-0.1.0-red.svg
+[SemVer]: http://img.shields.io/:semver-0.1.0-yellow.svg
