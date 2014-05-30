@@ -1,8 +1,17 @@
 {
-    "name": "icecave/disekt",
-    "description": "This package needs a description!",
-    "keywords": [],
-    "homepage": "https://github.com/IcecaveStudios/disekt",
+    "name": "icecave/dialekt",
+    "description": "A simple language for representing boolean expressions.",
+    "keywords": [
+        "tag",
+        "label",
+        "expression",
+        "parser",
+        "search",
+        "boolean",
+        "logic",
+        "logical"
+    ],
+    "homepage": "https://github.com/IcecaveStudios/dialekt",
     "license": "MIT",
     "authors": [
         {
@@ -12,8 +21,7 @@
         }
     ],
     "require": {
-        "php": ">=5.3",
-        "icecave/isolator": "~2"
+        "php": ">=5.3"
     },
     "require-dev": {
         "icecave/archer": "~1"
@@ -23,7 +31,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Icecave\\Disekt\\": "src"
+            "Icecave\\Dialekt\\": "src"
         }
     }
 }

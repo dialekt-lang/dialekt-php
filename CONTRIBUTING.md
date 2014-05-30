@@ -1,6 +1,6 @@
 # Contributing
 
-**Disekt** is open source software; contributions from the community are encouraged. Please take a moment to read these guidelines before submitting changes.
+**Dialekt** is open source software; contributions from the community are encouraged. Please take a moment to read these guidelines before submitting changes.
 
 ### Code style
 
