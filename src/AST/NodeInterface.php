@@ -2,7 +2,7 @@
 namespace Icecave\Dialekt\AST;
 
 /**
- * Base interface for all AST nodes.
+ * An AST node.
  */
 interface NodeInterface
 {

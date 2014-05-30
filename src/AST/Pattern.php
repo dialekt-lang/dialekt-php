@@ -2,7 +2,7 @@
 namespace Icecave\Dialekt\AST;
 
 /**
- * Represents a pattern match expression.
+ * An AST node that represents a pattern-match expression.
  */
 class Pattern implements ExpressionInterface
 {

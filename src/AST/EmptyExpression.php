@@ -2,7 +2,7 @@
 namespace Icecave\Dialekt\AST;
 
 /**
- * An empty expression.
+ * An AST node that represents an empty expression.
  */
 class EmptyExpression implements ExpressionInterface
 {
