@@ -4,7 +4,7 @@ namespace Icecave\Dialekt\AST;
 /**
  * Represents the actual wildcard portion of a pattern expression.
  */
-class PatternWildcard implements PatternChildInterface
+class PatternWildcard extends AbstractNode implements PatternChildInterface
 {
     /**
      * Pass this node to the appropriate method on the given visitor.
