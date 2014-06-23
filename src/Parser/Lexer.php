@@ -15,14 +15,34 @@ class Lexer implements LexerInterface
      */
     public function lex($expression)
     {
+        $newLineLength = strlen(PHP_EOL);
+
+        $this->currentOffset = 0;
+        $this->currentLine = 1;
+        $this->currentColumn = 0;
         $this->state = self::STATE_BEGIN;
         $this->tokens = array();
         $this->buffer = '';
 
         $length = strlen($expression);
 
-        for ($index = 0; $index < $length; ++$index) {
-            $char = $expression[$index];
+        while ($this->currentOffset < $length) {
+
+            $this->currentColumn++;
+
+            if (
+                0 === substr_compare(
+                    $expression,
+                    PHP_EOL,
+                    $this->currentOffset - $newLineLength,
+                    $newLineLength
+                )
+            ) {
+                $this->currentLine++;
+                $this->currentColumn = 1;
+            }
+
+            $char = $expression[$this->currentOffset];
 
             if (self::STATE_SIMPLE_STRING === $this->state) {
                 $this->handleSimpleStringState($char);
@@ -33,6 +53,8 @@ class Lexer implements LexerInterface
             } else {
                 $this->handleBeginState($char);
             }
+
+            $this->currentOffset++;
         }
 
         if (self::STATE_SIMPLE_STRING === $this->state) {
@@ -49,11 +71,15 @@ class Lexer implements LexerInterface
     private function handleBeginState($char)
     {
         if (ctype_space($char)) {
-            // ignore
-        } elseif ($char === '(') {
-            $this->tokens[] = new Token(Token::OPEN_BRACKET, $char);
+            return;
+        }
+
+        $this->setTokenStart();
+
+        if ($char === '(') {
+            $this->emitToken(Token::OPEN_BRACKET, $char);
         } elseif ($char === ')') {
-            $this->tokens[] = new Token(Token::CLOSE_BRACKET, $char);
+            $this->emitToken(Token::CLOSE_BRACKET, $char);
         } elseif ($char === '"') {
             $this->state = self::STATE_QUOTED_STRING;
         } else {
@@ -68,10 +94,12 @@ class Lexer implements LexerInterface
             $this->finalizeSimpleString();
         } elseif ($char === '(') {
             $this->finalizeSimpleString();
-            $this->tokens[] = new Token(Token::OPEN_BRACKET, $char);
+            $this->setTokenStart();
+            $this->emitToken(Token::OPEN_BRACKET, $char);
         } elseif ($char === ')') {
             $this->finalizeSimpleString();
-            $this->tokens[] = new Token(Token::CLOSE_BRACKET, $char);
+            $this->setTokenStart();
+            $this->emitToken(Token::CLOSE_BRACKET, $char);
         } else {
             $this->buffer .= $char;
         }
@@ -82,7 +110,7 @@ class Lexer implements LexerInterface
         if ($char === '\\') {
             $this->state = self::STATE_QUOTED_STRING_ESCAPE;
         } elseif ($char === '"') {
-            $this->tokens[] = new Token(Token::STRING, $this->buffer);
+            $this->emitToken(Token::STRING, $this->buffer);
             $this->state = self::STATE_BEGIN;
             $this->buffer = '';
         } else {
@@ -108,9 +136,33 @@ class Lexer implements LexerInterface
             $tokenType = Token::STRING;
         }
 
-        $this->tokens[] = new Token($tokenType, $this->buffer);
+        $this->emitToken($tokenType, $this->buffer, -1);
         $this->state = self::STATE_BEGIN;
         $this->buffer = '';
+    }
+
+    private function emitToken($type, $value, $lengthAdjustment = 0)
+    {
+        $this->tokens[] = new Token(
+            $type,
+            $value,
+            $this->tokenOffset,
+            $this->currentOffset
+                - $this->tokenOffset
+                + $lengthAdjustment
+                + 1,
+            $this->tokenLine,
+            $this->tokenColumn
+        );
+
+        $this->tokenOffset = $this->currentOffset;
+    }
+
+    private function setTokenStart()
+    {
+        $this->tokenOffset = $this->currentOffset;
+        $this->tokenLine = $this->currentLine;
+        $this->tokenColumn = $this->currentColumn;
     }
 
     const STATE_BEGIN                = 1;
@@ -118,6 +170,12 @@ class Lexer implements LexerInterface
     const STATE_QUOTED_STRING        = 3;
     const STATE_QUOTED_STRING_ESCAPE = 4;
 
+    private $offset;
+    private $line;
+    private $column;
+    private $tokenOffset;
+    private $tokenLine;
+    private $tokenColumn;
     private $state;
     private $tokens;
     private $buffer;

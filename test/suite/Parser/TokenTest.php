@@ -7,10 +7,21 @@ class TokenTest extends PHPUnit_Framework_TestCase
 {
     public function testConstructor()
     {
-        $token = new Token(Token::STRING, 'foo');
+        $token = new Token(
+            Token::STRING,
+            'foo',
+            1,
+            2,
+            3,
+            4
+        );
 
         $this->assertSame(Token::STRING, $token->type);
         $this->assertSame('foo', $token->value);
+        $this->assertSame(1, $token->offset);
+        $this->assertSame(2, $token->length);
+        $this->assertSame(3, $token->line);
+        $this->assertSame(4, $token->column);
     }
 
     /**
