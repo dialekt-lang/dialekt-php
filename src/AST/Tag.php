@@ -4,7 +4,7 @@ namespace Icecave\Dialekt\AST;
 /**
  * An AST node that represents a literal tag expression.
  */
-class Tag implements ExpressionInterface
+class Tag extends AbstractExpression implements ExpressionInterface
 {
     /**
      * @param string The tag name.

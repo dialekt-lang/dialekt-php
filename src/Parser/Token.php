@@ -14,10 +14,20 @@ final class Token
     const OPEN_BRACKET  = 6;
     const CLOSE_BRACKET = 7;
 
-    public function __construct($type, $value)
-    {
+    public function __construct(
+        $type,
+        $value,
+        $offset,
+        $length,
+        $line,
+        $column
+    ) {
         $this->type = $type;
         $this->value = $value;
+        $this->offset = $offset;
+        $this->length = $length;
+        $this->line = $line;
+        $this->column = $column;
     }
 
     public static function typeDescription($type)
@@ -42,4 +52,8 @@ final class Token
 
     public $type;
     public $value;
+    public $offset;
+    public $length;
+    public $line;
+    public $column;
 }

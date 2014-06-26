@@ -4,7 +4,7 @@ namespace Icecave\Dialekt\AST;
 /**
  * An AST node that represents the logical NOT operator.
  */
-class LogicalNot implements ExpressionInterface
+class LogicalNot extends AbstractExpression implements ExpressionInterface
 {
     /**
      * @param ExpressionInterface $child The expression being inverted by the NOT operator.

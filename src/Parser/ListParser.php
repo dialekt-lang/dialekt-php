@@ -7,73 +7,49 @@ use Icecave\Dialekt\AST\Tag;
 use Icecave\Dialekt\Parser\Exception\ParseException;
 
 /**
- * Parses a list of tags into an AND expression.
+ * Parses a list of tags.
+ *
+ * The expression must be a space-separated list of tags. The result is
+ * either EmptyExpression, a single Tag node, or a LogicalAnd node
+ * containing only Tag nodes.
  */
-class ListParser implements ParserInterface
+class ListParser extends AbstractParser
 {
-    /**
-     * @param string              $wildcardString The string to use as a wildcard placeholder.
-     * @param LexerInterface|null $lexer
-     */
-    public function __construct(
-        $wildcardString = null,
-        LexerInterface $lexer = null
-    ) {
-        if (null === $wildcardString) {
-            $wildcardString = Token::WILDCARD_CHARACTER;
-        }
-
-        if (null === $lexer) {
-            $lexer = new Lexer;
-        }
-
-        $this->wildcardString = $wildcardString;
-        $this->lexer = $lexer;
-    }
-
-    /**
-     * Parse a list of tags.
-     *
-     * The expression must be a space-separated list of tags. The result is
-     * either EmptyExpression, a single Tag node, or a LogicalAnd node
-     * containing only Tag nodes.
-     *
-     * @param string $expression The tag list to parse.
-     *
-     * @return ExpressionInterface The parsed expression.
-     * @throws ParseException      if the tag list is invalid.
-     */
-    public function parse($expression)
+    protected function parseExpression()
     {
-        $tokens = $this->lexer->lex($expression);
+        $this->startExpression();
 
-        $result = new EmptyExpression;
+        $expression = null;
 
-        foreach ($tokens as $token) {
-            if (Token::STRING !== $token->type) {
+        while (current($this->tokens)) {
+
+            $token = $this->expectToken(Token::STRING);
+
+            if (strpos($token->value, $this->wildcardString()) !== false) {
                 throw new ParseException(
-                    'Unexpected ' . Token::typeDescription($token->type) . ', expected ' . Token::typeDescription(Token::STRING) . ' or end of input.'
-                );
-            } elseif (false !== strpos($token->value, $this->wildcardString)) {
-                throw new ParseException(
-                    'Unexpected wildcard string "' . $this->wildcardString . '", in tag "' . $token->value . '".'
+                    'Unexpected wildcard string "' . $this->wildcardString() . '", in tag "' . $token->value . '".'
                 );
             }
+
+            $this->startExpression();
+
+            next($this->tokens);
 
             $tag = new Tag($token->value);
 
-            if ($result instanceof EmptyExpression) {
-                $result = $tag;
-            } else {
-                if ($result instanceof Tag) {
-                    $result = new LogicalAnd($result);
-                }
+            $this->endExpression($tag);
 
-                $result->add($tag);
+            if ($expression) {
+                if ($expression instanceof Tag) {
+                    $expression = new LogicalAnd($expression);
+                }
+                $expression->add($tag);
+            } else {
+                $expression = $tag;
             }
         }
 
-        return $result;
+        return $this->endExpression($expression);
     }
 
     /**
@@ -105,7 +81,4 @@ class ListParser implements ParserInterface
 
         return $tags;
     }
-
-    private $wildcardString;
-    private $lexer;
 }
