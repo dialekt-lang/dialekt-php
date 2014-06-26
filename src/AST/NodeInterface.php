@@ -22,7 +22,7 @@ interface NodeInterface
      * @return integer        The index of the first character of this node in the source code.
      * @throws LogicException if the source has not been captured by the parser.
      */
-    public function offset();
+    public function sourceOffset();
 
     /**
      * Indiciates whether or not the node contains information about the

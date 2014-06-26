@@ -27,13 +27,13 @@ abstract class AbstractNode implements NodeInterface
      *
      * @return integer The index of the first character of this node in the source code.
      */
-    public function offset()
+    public function sourceOffset()
     {
-        if (null === $this->offset) {
+        if (null === $this->sourceOffset) {
             throw new LogicException('Source offset has not been captured.');
         }
 
-        return $this->offset;
+        return $this->sourceOffset;
     }
 
     /**
@@ -47,6 +47,18 @@ abstract class AbstractNode implements NodeInterface
         return null !== $this->source;
     }
 
-    private $offset;
+    /**
+     * Set the original source code of this node.
+     *
+     * @param string  $source       The original source code of this node.
+     * @param integer $sourceOffset The offset into the original source code where this code begins.
+     */
+    public function setSource($source, $sourceOffset)
+    {
+        $this->source = $source;
+        $this->sourceOffset = $sourceOffset;
+    }
+
     private $source;
+    private $sourceOffset;
 }
