@@ -4,7 +4,7 @@ namespace Icecave\Dialekt\AST;
 /**
  * A base class providing common functionality for polyadic operators.
  */
-abstract class AbstractPolyadicOperator extends AbstractNode implements
+abstract class AbstractPolyadicOperator extends AbstractExpression implements
     ExpressionInterface
 {
     /**

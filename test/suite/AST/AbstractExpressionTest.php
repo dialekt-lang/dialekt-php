@@ -4,11 +4,11 @@ namespace Icecave\Dialekt\AST;
 use Phake;
 use PHPUnit_Framework_TestCase;
 
-class AbstractNodeTest extends PHPUnit_Framework_TestCase
+class AbstractExpressionTest extends PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
-        $this->node = Phake::partialMock('Icecave\Dialekt\AST\AbstractNode');
+        $this->node = Phake::partialMock('Icecave\Dialekt\AST\AbstractExpression');
     }
 
     public function testSourceFailure()

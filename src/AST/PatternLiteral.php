@@ -4,7 +4,7 @@ namespace Icecave\Dialekt\AST;
 /**
  * Represents a literal (exact-match) portion of a pattern expression.
  */
-class PatternLiteral extends AbstractNode implements PatternChildInterface
+class PatternLiteral implements PatternChildInterface
 {
     /**
      * @param string $string The string to match.

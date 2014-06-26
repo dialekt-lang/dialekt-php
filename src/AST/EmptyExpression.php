@@ -4,7 +4,7 @@ namespace Icecave\Dialekt\AST;
 /**
  * An AST node that represents an empty expression.
  */
-class EmptyExpression extends AbstractNode implements ExpressionInterface
+class EmptyExpression extends AbstractExpression implements ExpressionInterface
 {
     /**
      * Pass this node to the appropriate method on the given visitor.

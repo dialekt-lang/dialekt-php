@@ -4,14 +4,14 @@ namespace Icecave\Dialekt\AST;
 use LogicException;
 
 /**
- * A base class providing common functionality for nodes.
+ * A base class providing common functionality for expressions.
  */
-abstract class AbstractNode implements NodeInterface
+abstract class AbstractExpression implements ExpressionInterface
 {
     /**
-     * Fetch the original source code of this node.
+     * Fetch the original source code of this expression.
      *
-     * @return string The original source code of this node.
+     * @return string The original source code of this expression.
      */
     public function source()
     {
@@ -23,9 +23,9 @@ abstract class AbstractNode implements NodeInterface
     }
 
     /**
-     * Fetch the index of the first character of this node in the source code.
+     * Fetch the index of the first character of this expression in the source code.
      *
-     * @return integer The index of the first character of this node in the source code.
+     * @return integer The index of the first character of this expression in the source code.
      */
     public function sourceOffset()
     {
@@ -37,8 +37,8 @@ abstract class AbstractNode implements NodeInterface
     }
 
     /**
-     * Indiciates whether or not the node contains information about the
-     * original source of the node.
+     * Indiciates whether or not the expression contains information about the
+     * original source of the expression.
      *
      * @return boolean True if the source/offset has been captured; otherwise, false.
      */
@@ -48,9 +48,9 @@ abstract class AbstractNode implements NodeInterface
     }
 
     /**
-     * Set the original source code of this node.
+     * Set the original source code of this expression.
      *
-     * @param string  $source       The original source code of this node.
+     * @param string  $source       The original source code of this expression.
      * @param integer $sourceOffset The offset into the original source code where this code begins.
      */
     public function setSource($source, $sourceOffset)

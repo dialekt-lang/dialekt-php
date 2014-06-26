@@ -11,9 +11,12 @@ use Icecave\Dialekt\AST\PatternWildcard;
 use Icecave\Dialekt\AST\Tag;
 use Icecave\Dialekt\Parser\Exception\ParseException;
 use Icecave\Dialekt\Renderer\ExpressionRenderer;
-
 use PHPUnit_Framework_TestCase;
 
+/**
+ * @covers Icecave\Dialekt\Parser\ExpressionParser
+ * @covers Icecave\Dialekt\Parser\AbstractParser
+ */
 class ExpressionParserTest extends PHPUnit_Framework_TestCase
 {
     public function setUp()
@@ -54,7 +57,7 @@ class ExpressionParserTest extends PHPUnit_Framework_TestCase
 
     public function testParseUsingLogicalOrAsDefaultOperator()
     {
-        $this->parser = new ExpressionParser(null, true);
+        $this->parser->setLogicalOrByDefault(true);
 
         $result = $this->parser->parse('a and b c and d');
 
@@ -62,6 +65,55 @@ class ExpressionParserTest extends PHPUnit_Framework_TestCase
             '((a AND b) OR (c AND d))',
             $this->renderer->render($result)
         );
+    }
+
+    public function testParseWithSourceCapture()
+    {
+        $this->parser->setCaptureSource(true);
+
+        $result = $this->parser->parse('a AND (b OR c) AND NOT p*');
+
+        $this->assertSame('a AND (b OR c) AND NOT p*', $result->source());
+        $this->assertSame(0, $result->sourceOffset());
+
+        $children = $result->children();
+
+        $node = $children[0];
+        $this->assertSame('a', $node->source());
+        $this->assertSame(0, $node->sourceOffset());
+
+        $node = $children[1];
+        $this->assertSame('(b OR c)', $node->source());
+        $this->assertSame(6, $node->sourceOffset());
+
+        $node = $children[2];
+        $this->assertSame('NOT p*', $node->source());
+        $this->assertSame(19, $node->sourceOffset());
+
+        $node = $children[2]->child();
+        $this->assertSame('p*', $node->source());
+        $this->assertSame(23, $node->sourceOffset());
+
+        $children = $children[1]->children();
+        $node = $children[0];
+        $this->assertSame('b', $node->source());
+        $this->assertSame(7, $node->sourceOffset());
+
+        $node = $children[1];
+        $this->assertSame('c', $node->source());
+        $this->assertSame(12, $node->sourceOffset());
+    }
+
+    public function testParseEmptyExpressionWithSourceCapture()
+    {
+        $this->parser->setCaptureSource(true);
+
+        $result = $this->parser->parse('');
+
+        $this->assertInstanceOf('Icecave\Dialekt\AST\EmptyExpression', $result);
+
+        $this->assertSame('', $result->source());
+        $this->assertSame(0, $result->sourceOffset());
     }
 
     public function parseTestVectors()

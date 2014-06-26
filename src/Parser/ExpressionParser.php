@@ -1,7 +1,6 @@
 <?php
 namespace Icecave\Dialekt\Parser;
 
-use Icecave\Dialekt\AST\EmptyExpression;
 use Icecave\Dialekt\AST\ExpressionInterface;
 use Icecave\Dialekt\AST\LogicalAnd;
 use Icecave\Dialekt\AST\LogicalNot;
@@ -10,106 +9,90 @@ use Icecave\Dialekt\AST\Pattern;
 use Icecave\Dialekt\AST\PatternLiteral;
 use Icecave\Dialekt\AST\PatternWildcard;
 use Icecave\Dialekt\AST\Tag;
-use Icecave\Dialekt\Parser\Exception\ParseException;
 
-class ExpressionParser implements ParserInterface
+class ExpressionParser extends AbstractParser
 {
     /**
-     * @param string              $wildcardString     The string to use as a wildcard placeholder.
-     * @param boolean             $logicalOrByDefault True if the default operator should be OR, rather than AND.
-     * @param LexerInterface|null $lexer
+     * @param LexerInterface|null $lexer The lexer used to tokenise input expressions.
      */
-    public function __construct(
-        $wildcardString = null,
-        $logicalOrByDefault = false,
-        LexerInterface $lexer = null
-    ) {
-        if (null === $wildcardString) {
-            $wildcardString = Token::WILDCARD_CHARACTER;
-        }
+    public function __construct(LexerInterface $lexer = null)
+    {
+        parent::__construct($lexer);
 
-        if (null === $lexer) {
-            $lexer = new Lexer;
-        }
-
-        $this->wildcardString = $wildcardString;
-        $this->logicalOrByDefault = $logicalOrByDefault;
-        $this->lexer = $lexer;
+        $this->setLogicalOrByDefault(false);
     }
 
     /**
-     * Parse an expression.
+     * Indicates whether or not the the default operator should be OR, rather
+     * than AND.
      *
-     * @param string $expression The expression to parse.
-     *
-     * @return ExpressionInterface The parsed expression.
-     * @throws ParseException      if the expression is invalid.
+     * @return boolean True if the default operator should be OR, rather than AND.
      */
-    public function parse($expression)
+    public function logicalOrByDefault()
     {
-        $tokens = $this->lexer->lex($expression);
-
-        if (!$tokens) {
-            return new EmptyExpression;
-        }
-
-        $expression = $this->parseExpression($tokens);
-
-        if (null !== key($tokens)) {
-            throw new ParseException(
-                'Unexpected ' . Token::typeDescription(current($tokens)->type) . ', expected end of input.'
-            );
-        }
-
-        return $expression;
+        return $this->logicalOrByDefault;
     }
 
-    private function parseExpression(array &$tokens)
+    /**
+     * Set whether or not the the default operator should be OR, rather than
+     * AND.
+     *
+     * @param boolean $logicalOrByDefault True if the default operator should be OR, rather than AND.
+     */
+    public function setLogicalOrByDefault($logicalOrByDefault)
     {
-        $expression = $this->parseUnaryExpression($tokens);
-        $expression = $this->parseCompoundExpression($tokens, $expression);
-
-        return $expression;
+        $this->logicalOrByDefault = $logicalOrByDefault;
     }
 
-    private function parseUnaryExpression(array &$tokens)
+    protected function parseExpression()
+    {
+        $this->startExpression();
+
+        $expression = $this->parseUnaryExpression();
+        $expression = $this->parseCompoundExpression($expression);
+
+        return $this->endExpression($expression);
+    }
+
+    private function parseUnaryExpression()
     {
         $token = $this->expect(
-            $tokens,
             Token::STRING,
             Token::LOGICAL_NOT,
             Token::OPEN_BRACKET
         );
 
         if (Token::LOGICAL_NOT === $token->type) {
-            return $this->parseLogicalNot($tokens);
+            return $this->parseLogicalNot();
         } elseif (Token::OPEN_BRACKET === $token->type) {
-            return $this->parseNestedExpression($tokens);
-        } elseif (false === strpos($token->value, $this->wildcardString)) {
-            return $this->parseTag($tokens);
+            return $this->parseNestedExpression();
+        } elseif (false === strpos($token->value, $this->wildcardString())) {
+            return $this->parseTag();
         } else {
-            return $this->parsePattern($tokens);
+            return $this->parsePattern();
         }
     }
 
-    private function parseTag(array &$tokens)
+    private function parseTag()
     {
-        $token = current($tokens);
+        $this->startExpression();
 
-        next($tokens);
+        $expression = new Tag(
+            current($this->tokens)->value
+        );
 
-        return new Tag($token->value);
+        next($this->tokens);
+
+        return $this->endExpression($expression);
     }
 
-    private function parsePattern(array &$tokens)
+    private function parsePattern()
     {
-        $token = current($tokens);
-
-        next($tokens);
+        $this->startExpression();
 
         $parts = preg_split(
-            '/(' . preg_quote($this->wildcardString, '/') . ')/',
-            $token->value,
+            '/(' . preg_quote($this->wildcardString(), '/') . ')/',
+            current($this->tokens)->value,
             -1,
             PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY
         );
@@ -117,49 +100,54 @@ class ExpressionParser implements ParserInterface
         $expression = new Pattern;
 
         foreach ($parts as $value) {
-            if ($this->wildcardString === $value) {
+            if ($this->wildcardString() === $value) {
                 $expression->add(new PatternWildcard);
             } else {
                 $expression->add(new PatternLiteral($value));
             }
         }
 
-        return $expression;
+        next($this->tokens);
+
+        return $this->endExpression($expression);
     }
 
-    private function parseNestedExpression(array &$tokens)
+    private function parseNestedExpression()
     {
-        next($tokens);
+        $this->startExpression();
 
-        $expression = $this->parseExpression($tokens);
+        next($this->tokens);
 
-        $this->expect(
-            $tokens,
-            Token::CLOSE_BRACKET
-        );
+        $expression = $this->parseExpression();
 
-        next($tokens);
+        $this->expect(Token::CLOSE_BRACKET);
 
-        return $expression;
+        next($this->tokens);
+
+        return $this->endExpression($expression);
     }
 
-    private function parseLogicalNot(array &$tokens)
+    private function parseLogicalNot()
     {
-        next($tokens);
+        $this->startExpression();
 
-        return new LogicalNot(
-            $this->parseUnaryExpression($tokens)
+        next($this->tokens);
+
+        return $this->endExpression(
+            new LogicalNot(
+                $this->parseUnaryExpression()
+            )
         );
     }
 
-    private function parseCompoundExpression(array &$tokens, ExpressionInterface $leftExpression, $minimumPrecedence = 0)
+    private function parseCompoundExpression(ExpressionInterface $leftExpression, $minimumPrecedence = 0)
     {
         $allowCollapse = false;
 
         while (true) {
 
             // Parse the operator and determine whether or not it's explicit ...
-            list($operator, $isExplicit) = $this->parseOperator($tokens);
+            list($operator, $isExplicit) = $this->parseOperator();
 
             $precedence = self::$operatorPrecedence[$operator];
 
@@ -170,19 +158,18 @@ class ExpressionParser implements ParserInterface
 
             // Advance the token pointer if an explicit operator token was found ...
             if ($isExplicit) {
-                next($tokens);
+                next($this->tokens);
             }
 
             // Parse the expression to the right of the operator ...
-            $rightExpression = $this->parseUnaryExpression($tokens);
+            $rightExpression = $this->parseUnaryExpression();
 
             // Only parse additional compound expressions if their precedence is greater than the
             // expression already being parsed ...
-            list($nextOperator) = $this->parseOperator($tokens);
+            list($nextOperator) = $this->parseOperator();
 
             if ($precedence < self::$operatorPrecedence[$nextOperator]) {
                 $rightExpression = $this->parseCompoundExpression(
-                    $tokens,
                     $rightExpression,
                     $precedence + 1
                 );
@@ -206,9 +193,9 @@ class ExpressionParser implements ParserInterface
         return $leftExpression;
     }
 
-    private function parseOperator(array &$tokens)
+    private function parseOperator()
     {
-        $token = current($tokens);
+        $token = current($this->tokens);
 
         // End of input ...
         if (false === $token) {
@@ -227,7 +214,7 @@ class ExpressionParser implements ParserInterface
             return array(Token::LOGICAL_AND, true);
 
         // Implicit logical OR ...
-        } elseif ($this->logicalOrByDefault) {
+        } elseif ($this->logicalOrByDefault()) {
             return array(Token::LOGICAL_OR, false);
 
         // Implicit logical AND ...
@@ -236,40 +223,6 @@ class ExpressionParser implements ParserInterface
         }
 
         return array(null, false);
-    }
-
-    private function expect(array &$tokens)
-    {
-        $types = array_slice(func_get_args(), 1);
-        $token = current($tokens);
-
-        if (!$token) {
-            throw new ParseException(
-                'Unexpected end of input, expected ' . $this->formatExpectedTokenNames($types) . '.'
-            );
-        } elseif (!in_array($token->type, $types)) {
-            throw new ParseException(
-                'Unexpected ' . Token::typeDescription($token->type) . ', expected ' . $this->formatExpectedTokenNames($types) . '.'
-            );
-        }
-
-        return $token;
-    }
-
-    private function formatExpectedTokenNames(array $types)
-    {
-        $types = array_map(
-            'Icecave\Dialekt\Parser\Token::typeDescription',
-            $types
-        );
-
-        if (count($types) === 1) {
-            return $types[0];
-        }
-
-        $lastType = array_pop($types);
-
-        return implode(', ', $types) . ' or ' . $lastType;
     }
 
     private static $operatorClasses = array(
@@ -283,7 +236,5 @@ class ExpressionParser implements ParserInterface
         null               => -1,
     );
 
-    private $wildcardString;
-    private $lexer;
     private $logicalOrByDefault;
 }
