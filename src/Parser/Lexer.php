@@ -71,18 +71,18 @@ class Lexer implements LexerInterface
     private function handleBeginState($char)
     {
         if (ctype_space($char)) {
-            return;
-        }
-
-        $this->setTokenStart();
-
-        if ($char === '(') {
-            $this->emitToken(Token::OPEN_BRACKET, $char);
+            // ignore ...
+        } elseif ($char === '(') {
+            $this->startToken(Token::OPEN_BRACKET);
+            $this->endToken($char);
         } elseif ($char === ')') {
-            $this->emitToken(Token::CLOSE_BRACKET, $char);
+            $this->startToken(Token::CLOSE_BRACKET);
+            $this->endToken($char);
         } elseif ($char === '"') {
+            $this->startToken(Token::STRING);
             $this->state = self::STATE_QUOTED_STRING;
         } else {
+            $this->startToken(Token::STRING);
             $this->state = self::STATE_SIMPLE_STRING;
             $this->buffer = $char;
         }
@@ -94,12 +94,12 @@ class Lexer implements LexerInterface
             $this->finalizeSimpleString();
         } elseif ($char === '(') {
             $this->finalizeSimpleString();
-            $this->setTokenStart();
-            $this->emitToken(Token::OPEN_BRACKET, $char);
+            $this->startToken(Token::OPEN_BRACKET);
+            $this->endToken($char);
         } elseif ($char === ')') {
             $this->finalizeSimpleString();
-            $this->setTokenStart();
-            $this->emitToken(Token::CLOSE_BRACKET, $char);
+            $this->startToken(Token::CLOSE_BRACKET);
+            $this->endToken($char);
         } else {
             $this->buffer .= $char;
         }
@@ -110,7 +110,7 @@ class Lexer implements LexerInterface
         if ($char === '\\') {
             $this->state = self::STATE_QUOTED_STRING_ESCAPE;
         } elseif ($char === '"') {
-            $this->emitToken(Token::STRING, $this->buffer);
+            $this->endToken($this->buffer);
             $this->state = self::STATE_BEGIN;
             $this->buffer = '';
         } else {
@@ -127,24 +127,30 @@ class Lexer implements LexerInterface
     private function finalizeSimpleString()
     {
         if (strcasecmp('and', $this->buffer) === 0) {
-            $tokenType = Token::LOGICAL_AND;
+            $this->tokenType = Token::LOGICAL_AND;
         } elseif (strcasecmp('or', $this->buffer) === 0) {
-            $tokenType = Token::LOGICAL_OR;
+            $this->tokenType = Token::LOGICAL_OR;
         } elseif (strcasecmp('not', $this->buffer) === 0) {
-            $tokenType = Token::LOGICAL_NOT;
-        } else {
-            $tokenType = Token::STRING;
+            $this->tokenType = Token::LOGICAL_NOT;
         }
 
-        $this->emitToken($tokenType, $this->buffer, -1);
+        $this->endToken($this->buffer, -1);
         $this->state = self::STATE_BEGIN;
         $this->buffer = '';
     }
 
-    private function emitToken($type, $value, $lengthAdjustment = 0)
+    private function startToken($type)
+    {
+        $this->tokenType = $type;
+        $this->tokenOffset = $this->currentOffset;
+        $this->tokenLine = $this->currentLine;
+        $this->tokenColumn = $this->currentColumn;
+    }
+
+    private function endToken($value, $lengthAdjustment = 0)
     {
         $this->tokens[] = new Token(
-            $type,
+            $this->tokenType,
             $value,
             $this->tokenOffset,
             $this->currentOffset
@@ -158,13 +164,6 @@ class Lexer implements LexerInterface
         $this->tokenOffset = $this->currentOffset;
     }
 
-    private function setTokenStart()
-    {
-        $this->tokenOffset = $this->currentOffset;
-        $this->tokenLine = $this->currentLine;
-        $this->tokenColumn = $this->currentColumn;
-    }
-
     const STATE_BEGIN                = 1;
     const STATE_SIMPLE_STRING        = 2;
     const STATE_QUOTED_STRING        = 3;
@@ -173,6 +172,7 @@ class Lexer implements LexerInterface
     private $offset;
     private $line;
     private $column;
+    private $tokenType;
     private $tokenOffset;
     private $tokenLine;
     private $tokenColumn;
