@@ -104,7 +104,7 @@ abstract class AbstractParser implements ParserInterface
 
     abstract protected function parseExpression();
 
-    protected function expect()
+    protected function expectToken()
     {
         $types = func_get_args();
         $token = current($this->tokens);

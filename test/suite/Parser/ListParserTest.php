@@ -5,9 +5,12 @@ use Icecave\Dialekt\AST\EmptyExpression;
 use Icecave\Dialekt\AST\LogicalAnd;
 use Icecave\Dialekt\AST\Tag;
 use Icecave\Dialekt\Parser\Exception\ParseException;
-
 use PHPUnit_Framework_TestCase;
 
+/**
+ * @covers Icecave\Dialekt\Parser\ListParser
+ * @covers Icecave\Dialekt\Parser\AbstractParser
+ */
 class ListParserTest extends PHPUnit_Framework_TestCase
 {
     public function setUp()
@@ -46,7 +49,7 @@ class ListParserTest extends PHPUnit_Framework_TestCase
     {
         $this->setExpectedException(
             'Icecave\Dialekt\Parser\Exception\ParseException',
-            'Unexpected AND operator, expected tag or end of input.'
+            'Unexpected AND operator, expected tag.'
         );
 
         $this->parser->parse('and');
@@ -84,5 +87,34 @@ class ListParserTest extends PHPUnit_Framework_TestCase
             array('foo', 'bar spam'),
             $this->parser->parseAsArray('foo "bar spam"')
         );
+    }
+
+    public function testParseWithSourceCapture()
+    {
+        $this->parser->setCaptureSource(true);
+
+        $result = $this->parser->parse('a');
+
+        $this->assertSame('a', $result->source());
+        $this->assertSame(0, $result->sourceOffset());
+
+        $result = $this->parser->parse('a b c');
+
+        $this->assertSame('a b c', $result->source());
+        $this->assertSame(0, $result->sourceOffset());
+
+        $children = $result->children();
+
+        $node = $children[0];
+        $this->assertSame('a', $node->source());
+        $this->assertSame(0, $node->sourceOffset());
+
+        $node = $children[1];
+        $this->assertSame('b', $node->source());
+        $this->assertSame(2, $node->sourceOffset());
+
+        $node = $children[2];
+        $this->assertSame('c', $node->source());
+        $this->assertSame(4, $node->sourceOffset());
     }
 }

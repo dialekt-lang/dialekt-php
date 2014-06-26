@@ -56,7 +56,7 @@ class ExpressionParser extends AbstractParser
 
     private function parseUnaryExpression()
     {
-        $token = $this->expect(
+        $token = $this->expectToken(
             Token::STRING,
             Token::LOGICAL_NOT,
             Token::OPEN_BRACKET
@@ -120,7 +120,7 @@ class ExpressionParser extends AbstractParser
 
         $expression = $this->parseExpression();
 
-        $this->expect(Token::CLOSE_BRACKET);
+        $this->expectToken(Token::CLOSE_BRACKET);
 
         next($this->tokens);
 
