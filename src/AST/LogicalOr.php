@@ -4,7 +4,7 @@ namespace Icecave\Dialekt\AST;
 /**
  * An AST node that represents the logical OR operator.
  */
-class LogicalOr extends AbstractPolyadicOperator
+class LogicalOr extends AbstractPolyadicExpression
 {
     /**
      * Pass this node to the appropriate method on the given visitor.
