@@ -15,8 +15,6 @@ class Lexer implements LexerInterface
      */
     public function lex($expression)
     {
-        $newLineLength = strlen(PHP_EOL);
-
         $this->currentOffset = 0;
         $this->currentLine = 1;
         $this->currentColumn = 0;
@@ -25,24 +23,19 @@ class Lexer implements LexerInterface
         $this->buffer = '';
 
         $length = strlen($expression);
+        $previousChar = null;
 
         while ($this->currentOffset < $length) {
-
+            $char = $expression[$this->currentOffset];
             $this->currentColumn++;
 
             if (
-                0 === substr_compare(
-                    $expression,
-                    PHP_EOL,
-                    $this->currentOffset - $newLineLength,
-                    $newLineLength
-                )
+                "\n" === $previousChar ||
+                ("\r" === $previousChar && "\n" !== $char)
             ) {
                 $this->currentLine++;
                 $this->currentColumn = 1;
             }
-
-            $char = $expression[$this->currentOffset];
 
             if (self::STATE_SIMPLE_STRING === $this->state) {
                 $this->handleSimpleStringState($char);
@@ -55,6 +48,7 @@ class Lexer implements LexerInterface
             }
 
             $this->currentOffset++;
+            $previousChar = $char;
         }
 
         if (self::STATE_SIMPLE_STRING === $this->state) {
