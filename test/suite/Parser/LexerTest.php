@@ -160,17 +160,25 @@ class LexerTest extends PHPUnit_Framework_TestCase
                     new Token(Token::STRING, 'spam', 11, 4, 3, 1),
                 ),
             ),
-            'newline inside string' => array(
-                '"foo'. PHP_EOL . 'bar"',
+            'newline handling' => array(
+                '"foo'. "\n" . 'bar" baz',
                 array(
-                    new Token(
-                        Token::STRING,
-                        'foo' . PHP_EOL . 'bar',
-                        0,
-                        8 + strlen(PHP_EOL),
-                        1,
-                        1
-                    ),
+                    new Token(Token::STRING, 'foo' . "\n" . 'bar', 0, 9, 1, 1),
+                    new Token(Token::STRING, 'baz', 10, 3, 2, 6),
+                ),
+            ),
+            'carriage return handling' => array(
+                '"foo'. "\r" . 'bar" baz',
+                array(
+                    new Token(Token::STRING, 'foo' . "\r" . 'bar', 0, 9, 1, 1),
+                    new Token(Token::STRING, 'baz', 10, 3, 2, 6),
+                ),
+            ),
+            'carriage return + newline handling' => array(
+                '"foo'. "\r\n" . 'bar" baz',
+                array(
+                    new Token(Token::STRING, 'foo' . "\r\n" . 'bar', 0, 10, 1, 1),
+                    new Token(Token::STRING, 'baz', 11, 3, 2, 6),
                 ),
             ),
         );
