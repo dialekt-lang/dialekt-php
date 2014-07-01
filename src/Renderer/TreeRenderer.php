@@ -30,7 +30,6 @@ class TreeRenderer implements RendererInterface, VisitorInterface
         }
 
         $this->endOfLine = $endOfLine;
-        $this->indentLevel = 0;
     }
 
     /**
@@ -190,5 +189,4 @@ class TreeRenderer implements RendererInterface, VisitorInterface
     }
 
     private $endOfLine;
-    private $indentLevel;
 }
