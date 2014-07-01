@@ -8,7 +8,7 @@ class Lexer implements LexerInterface
     /**
      * Tokenize an expression.
      *
-     * @param string $expression The expression to parse.
+     * @param string $expression The expression to tokenize.
      *
      * @return array<Token>   The tokens of the expression.
      * @throws ParseException if the expression is invalid.
@@ -162,9 +162,9 @@ class Lexer implements LexerInterface
     const STATE_QUOTED_STRING        = 3;
     const STATE_QUOTED_STRING_ESCAPE = 4;
 
-    private $offset;
-    private $line;
-    private $column;
+    private $currentOffset;
+    private $currentLine;
+    private $currentColumn;
     private $tokenType;
     private $tokenOffset;
     private $tokenLine;
