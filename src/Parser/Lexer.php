@@ -121,11 +121,11 @@ class Lexer implements LexerInterface
     private function finalizeSimpleString()
     {
         if (strcasecmp('and', $this->buffer) === 0) {
-            $this->tokenType = Token::LOGICAL_AND;
+            $this->nextToken->type = Token::LOGICAL_AND;
         } elseif (strcasecmp('or', $this->buffer) === 0) {
-            $this->tokenType = Token::LOGICAL_OR;
+            $this->nextToken->type = Token::LOGICAL_OR;
         } elseif (strcasecmp('not', $this->buffer) === 0) {
-            $this->tokenType = Token::LOGICAL_NOT;
+            $this->nextToken->type = Token::LOGICAL_NOT;
         }
 
         $this->endToken($this->buffer, -1);
@@ -135,26 +135,24 @@ class Lexer implements LexerInterface
 
     private function startToken($type)
     {
-        $this->tokenType = $type;
-        $this->tokenOffset = $this->currentOffset;
-        $this->tokenLine = $this->currentLine;
-        $this->tokenColumn = $this->currentColumn;
+        $this->nextToken = new Token(
+            $type,
+            '',
+            $this->currentOffset,
+            0,
+            $this->currentLine,
+            $this->currentColumn
+        );
     }
 
     private function endToken($value, $lengthAdjustment = 0)
     {
-        $this->tokens[] = new Token(
-            $this->tokenType,
-            $value,
-            $this->tokenOffset,
-            $this->currentOffset
-                + $lengthAdjustment
-                + 1,
-            $this->tokenLine,
-            $this->tokenColumn
-        );
-
-        $this->tokenOffset = $this->currentOffset;
+        $this->nextToken->value = $value;
+        $this->nextToken->endOffset = $this->currentOffset
+                                    + $lengthAdjustment
+                                    + 1;
+        $this->tokens[] = $this->nextToken;
+        $this->nextToken = null;
     }
 
     const STATE_BEGIN                = 1;
@@ -165,11 +163,8 @@ class Lexer implements LexerInterface
     private $currentOffset;
     private $currentLine;
     private $currentColumn;
-    private $tokenType;
-    private $tokenOffset;
-    private $tokenLine;
-    private $tokenColumn;
     private $state;
     private $tokens;
+    private $nextToken;
     private $buffer;
 }
