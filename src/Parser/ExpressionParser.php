@@ -12,12 +12,9 @@ use Icecave\Dialekt\AST\Tag;
 
 class ExpressionParser extends AbstractParser
 {
-    /**
-     * @param LexerInterface|null $lexer The lexer used to tokenise input expressions.
-     */
-    public function __construct(LexerInterface $lexer = null)
+    public function __construct()
     {
-        parent::__construct($lexer);
+        parent::__construct();
 
         $this->setLogicalOrByDefault(false);
     }

@@ -11,40 +11,20 @@ class AbstractExpressionTest extends PHPUnit_Framework_TestCase
         $this->node = Phake::partialMock('Icecave\Dialekt\AST\AbstractExpression');
     }
 
-    public function testSourceFailure()
+    public function testDefaults()
     {
-        $this->setExpectedException(
-            'LogicException',
-            'Source has not been captured.'
-        );
-
-        $this->node->source();
+        $this->assertNull($this->node->firstToken());
+        $this->assertNull($this->node->lastToken());
     }
 
-    public function testSourceOffsetFailure()
+    public function testSetTokens()
     {
-        $this->setExpectedException(
-            'LogicException',
-            'Source offset has not been captured.'
-        );
+        $firstToken = Phake::mock('Icecave\Dialekt\Parser\Token');
+        $lastToken = Phake::mock('Icecave\Dialekt\Parser\Token');
 
-        $this->node->sourceOffset();
-    }
+        $this->node->setTokens($firstToken, $lastToken);
 
-    public function testHasSource()
-    {
-        $this->assertFalse($this->node->hasSource());
-
-        $this->node->setSource('foobar', 12);
-
-        $this->assertTrue($this->node->hasSource());
-    }
-
-    public function testSetSource()
-    {
-        $this->node->setSource('foobar', 12);
-
-        $this->assertSame('foobar', $this->node->source());
-        $this->assertSame(12, $this->node->sourceOffset());
+        $this->assertSame($firstToken, $this->node->firstToken());
+        $this->assertSame($lastToken, $this->node->lastToken());
     }
 }

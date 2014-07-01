@@ -18,10 +18,10 @@ class TokenTest extends PHPUnit_Framework_TestCase
 
         $this->assertSame(Token::STRING, $token->type);
         $this->assertSame('foo', $token->value);
-        $this->assertSame(1, $token->offset);
-        $this->assertSame(2, $token->length);
-        $this->assertSame(3, $token->line);
-        $this->assertSame(4, $token->column);
+        $this->assertSame(1, $token->startOffset);
+        $this->assertSame(2, $token->endOffset);
+        $this->assertSame(3, $token->lineNumber);
+        $this->assertSame(4, $token->columnNumber);
     }
 
     /**

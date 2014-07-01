@@ -21,8 +21,8 @@ class ExpressionParserTest extends PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
-        $this->parser = new ExpressionParser;
         $this->renderer = new ExpressionRenderer;
+        $this->parser = new ExpressionParser;
     }
 
     /**
@@ -36,10 +36,6 @@ class ExpressionParserTest extends PHPUnit_Framework_TestCase
             $this->renderer->render($expectedResult),
             $this->renderer->render($result)
         );
-
-        if ($expectedResult !== $result) {
-            $this->assertEquals($expectedResult, $result);
-        }
     }
 
     /**
@@ -69,51 +65,38 @@ class ExpressionParserTest extends PHPUnit_Framework_TestCase
 
     public function testParseWithSourceCapture()
     {
-        $this->parser->setCaptureSource(true);
+        $lexer = new Lexer;
+        $tokens = $lexer->lex('a AND (b OR c) AND NOT p*');
+        $result = $this->parser->parseTokens($tokens);
 
-        $result = $this->parser->parse('a AND (b OR c) AND NOT p*');
-
-        $this->assertSame('a AND (b OR c) AND NOT p*', $result->source());
-        $this->assertSame(0, $result->sourceOffset());
+        $this->assertSame($tokens[0], $result->firstToken());
+        $this->assertSame($tokens[9], $result->lastToken());
 
         $children = $result->children();
-
         $node = $children[0];
-        $this->assertSame('a', $node->source());
-        $this->assertSame(0, $node->sourceOffset());
+        $this->assertSame($tokens[0], $node->firstToken());
+        $this->assertSame($tokens[0], $node->lastToken());
 
         $node = $children[1];
-        $this->assertSame('(b OR c)', $node->source());
-        $this->assertSame(6, $node->sourceOffset());
+        $this->assertSame($tokens[2], $node->firstToken());
+        $this->assertSame($tokens[6], $node->lastToken());
 
         $node = $children[2];
-        $this->assertSame('NOT p*', $node->source());
-        $this->assertSame(19, $node->sourceOffset());
+        $this->assertSame($tokens[8], $node->firstToken());
+        $this->assertSame($tokens[9], $node->lastToken());
 
         $node = $children[2]->child();
-        $this->assertSame('p*', $node->source());
-        $this->assertSame(23, $node->sourceOffset());
+        $this->assertSame($tokens[9], $node->firstToken());
+        $this->assertSame($tokens[9], $node->lastToken());
 
         $children = $children[1]->children();
         $node = $children[0];
-        $this->assertSame('b', $node->source());
-        $this->assertSame(7, $node->sourceOffset());
+        $this->assertSame($tokens[3], $node->firstToken());
+        $this->assertSame($tokens[3], $node->lastToken());
 
         $node = $children[1];
-        $this->assertSame('c', $node->source());
-        $this->assertSame(12, $node->sourceOffset());
-    }
-
-    public function testParseEmptyExpressionWithSourceCapture()
-    {
-        $this->parser->setCaptureSource(true);
-
-        $result = $this->parser->parse('');
-
-        $this->assertInstanceOf('Icecave\Dialekt\AST\EmptyExpression', $result);
-
-        $this->assertSame('', $result->source());
-        $this->assertSame(0, $result->sourceOffset());
+        $this->assertSame($tokens[5], $node->firstToken());
+        $this->assertSame($tokens[5], $node->lastToken());
     }
 
     public function parseTestVectors()

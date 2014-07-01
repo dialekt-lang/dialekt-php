@@ -1,7 +1,7 @@
 <?php
 namespace Icecave\Dialekt\AST;
 
-use LogicException;
+use Icecave\Dialekt\Parser\Token;
 
 /**
  * A base class providing common functionality for expressions.
@@ -9,56 +9,37 @@ use LogicException;
 abstract class AbstractExpression implements ExpressionInterface
 {
     /**
-     * Fetch the original source code of this expression.
+     * Fetch the first token from the source that is part of this expression.
      *
-     * @return string The original source code of this expression.
+     * @return Token|null The first token from this expression.
      */
-    public function source()
+    public function firstToken()
     {
-        if (null === $this->source) {
-            throw new LogicException('Source has not been captured.');
-        }
-
-        return $this->source;
+        return $this->firstToken;
     }
 
     /**
-     * Fetch the index of the first character of this expression in the source code.
+     * Fetch the last token from the source that is part of this expression.
      *
-     * @return integer The index of the first character of this expression in the source code.
+     * @return Token|null The last token from this expression.
      */
-    public function sourceOffset()
+    public function lastToken()
     {
-        if (null === $this->sourceOffset) {
-            throw new LogicException('Source offset has not been captured.');
-        }
-
-        return $this->sourceOffset;
+        return $this->lastToken;
     }
 
     /**
-     * Indiciates whether or not the expression contains information about the
-     * original source of the expression.
+     * Set the delimiting tokens for this expression.
      *
-     * @return boolean True if the source/offset has been captured; otherwise, false.
+     * @param Token $firstToken The first token from this expression.
+     * @param Token $lastToken  The last token from this expression.
      */
-    public function hasSource()
+    public function setTokens(Token $firstToken, Token $lastToken)
     {
-        return null !== $this->source;
+        $this->firstToken = $firstToken;
+        $this->lastToken = $lastToken;
     }
 
-    /**
-     * Set the original source code of this expression.
-     *
-     * @param string  $source       The original source code of this expression.
-     * @param integer $sourceOffset The offset into the original source code where this code begins.
-     */
-    public function setSource($source, $sourceOffset)
-    {
-        $this->source = $source;
-        $this->sourceOffset = $sourceOffset;
-    }
-
-    private $source;
-    private $sourceOffset;
+    private $firstToken;
+    private $lastToken;
 }

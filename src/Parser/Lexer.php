@@ -148,7 +148,6 @@ class Lexer implements LexerInterface
             $value,
             $this->tokenOffset,
             $this->currentOffset
-                - $this->tokenOffset
                 + $lengthAdjustment
                 + 1,
             $this->tokenLine,
