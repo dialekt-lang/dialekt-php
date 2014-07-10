@@ -21,22 +21,20 @@ class ListParser extends AbstractParser
 
         $expression = null;
 
-        while (current($this->tokens)) {
+        while ($this->currentToken) {
 
-            $token = $this->expectToken(Token::STRING);
+            $this->expectToken(Token::STRING);
 
-            if (strpos($token->value, $this->wildcardString()) !== false) {
+            if (strpos($this->currentToken->value, $this->wildcardString()) !== false) {
                 throw new ParseException(
-                    'Unexpected wildcard string "' . $this->wildcardString() . '", in tag "' . $token->value . '".'
+                    'Unexpected wildcard string "' . $this->wildcardString() . '", in tag "' . $this->currentToken->value . '".'
                 );
             }
 
+            $tag = new Tag($this->currentToken->value);
+
             $this->startExpression();
-
-            next($this->tokens);
-
-            $tag = new Tag($token->value);
-
+            $this->nextToken();
             $this->endExpression($tag);
 
             if ($expression) {
@@ -49,7 +47,9 @@ class ListParser extends AbstractParser
             }
         }
 
-        return $this->endExpression($expression);
+        $this->endExpression($expression);
+
+        return $expression;
     }
 
     /**

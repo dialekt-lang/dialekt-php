@@ -48,22 +48,24 @@ class ExpressionParser extends AbstractParser
         $expression = $this->parseUnaryExpression();
         $expression = $this->parseCompoundExpression($expression);
 
-        return $this->endExpression($expression);
+        $this->endExpression($expression);
+
+        return $expression;
     }
 
     private function parseUnaryExpression()
     {
-        $token = $this->expectToken(
+        $this->expectToken(
             Token::STRING,
             Token::LOGICAL_NOT,
             Token::OPEN_BRACKET
         );
 
-        if (Token::LOGICAL_NOT === $token->type) {
+        if (Token::LOGICAL_NOT === $this->currentToken->type) {
             return $this->parseLogicalNot();
-        } elseif (Token::OPEN_BRACKET === $token->type) {
+        } elseif (Token::OPEN_BRACKET === $this->currentToken->type) {
             return $this->parseNestedExpression();
-        } elseif (false === strpos($token->value, $this->wildcardString())) {
+        } elseif (false === strpos($this->currentToken->value, $this->wildcardString())) {
             return $this->parseTag();
         } else {
             return $this->parsePattern();
@@ -75,12 +77,14 @@ class ExpressionParser extends AbstractParser
         $this->startExpression();
 
         $expression = new Tag(
-            current($this->tokens)->value
+            $this->currentToken->value
         );
 
-        next($this->tokens);
+        $this->nextToken();
 
-        return $this->endExpression($expression);
+        $this->endExpression($expression);
+
+        return $expression;
     }
 
     private function parsePattern()
@@ -89,7 +93,7 @@ class ExpressionParser extends AbstractParser
 
         $parts = preg_split(
             '/(' . preg_quote($this->wildcardString(), '/') . ')/',
-            current($this->tokens)->value,
+            $this->currentToken->value,
             -1,
             PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY
         );
@@ -104,37 +108,43 @@ class ExpressionParser extends AbstractParser
             }
         }
 
-        next($this->tokens);
+        $this->nextToken();
 
-        return $this->endExpression($expression);
+        $this->endExpression($expression);
+
+        return $expression;
     }
 
     private function parseNestedExpression()
     {
         $this->startExpression();
 
-        next($this->tokens);
+        $this->nextToken();
 
         $expression = $this->parseExpression();
 
         $this->expectToken(Token::CLOSE_BRACKET);
 
-        next($this->tokens);
+        $this->nextToken();
 
-        return $this->endExpression($expression);
+        $this->endExpression($expression);
+
+        return $expression;
     }
 
     private function parseLogicalNot()
     {
         $this->startExpression();
 
-        next($this->tokens);
+        $this->nextToken();
 
-        return $this->endExpression(
-            new LogicalNot(
-                $this->parseUnaryExpression()
-            )
+        $expression = new LogicalNot(
+            $this->parseUnaryExpression()
         );
+
+        $this->endExpression($expression);
+
+        return $expression;
     }
 
     private function parseCompoundExpression(ExpressionInterface $leftExpression, $minimumPrecedence = 0)
@@ -155,7 +165,7 @@ class ExpressionParser extends AbstractParser
 
             // Advance the token pointer if an explicit operator token was found ...
             if ($isExplicit) {
-                next($this->tokens);
+                $this->nextToken();
             }
 
             // Parse the expression to the right of the operator ...
@@ -192,22 +202,20 @@ class ExpressionParser extends AbstractParser
 
     private function parseOperator()
     {
-        $token = current($this->tokens);
-
         // End of input ...
-        if (false === $token) {
+        if (!$this->currentToken) {
             return array(null, false);
 
         // Closing bracket ...
-        } elseif (Token::CLOSE_BRACKET === $token->type) {
+        } elseif (Token::CLOSE_BRACKET === $this->currentToken->type) {
             return array(null, false);
 
         // Explicit logical OR ...
-        } elseif (Token::LOGICAL_OR === $token->type) {
+        } elseif (Token::LOGICAL_OR === $this->currentToken->type) {
             return array(Token::LOGICAL_OR, true);
 
         // Explicit logical AND ...
-        } elseif (Token::LOGICAL_AND === $token->type) {
+        } elseif (Token::LOGICAL_AND === $this->currentToken->type) {
             return array(Token::LOGICAL_AND, true);
 
         // Implicit logical OR ...

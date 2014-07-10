@@ -64,17 +64,19 @@ abstract class AbstractParser implements ParserInterface
      */
     public function parseTokens(array $tokens)
     {
-        $this->tokens = $tokens;
-
-        if (!$this->tokens) {
+        if (!$tokens) {
             return new EmptyExpression;
         }
 
+        $this->tokens = $tokens;
+        $this->currentToken = current($tokens);
+        $this->previousToken = null;
+
         $expression = $this->parseExpression();
 
-        if (null !== key($this->tokens)) {
+        if ($this->currentToken) {
             throw new ParseException(
-                'Unexpected ' . Token::typeDescription(current($this->tokens)->type) . ', expected end of input.'
+                'Unexpected ' . Token::typeDescription($this->currentToken->type) . ', expected end of input.'
             );
         }
 
@@ -86,19 +88,16 @@ abstract class AbstractParser implements ParserInterface
     protected function expectToken()
     {
         $types = func_get_args();
-        $token = current($this->tokens);
 
-        if (!$token) {
+        if (!$this->currentToken) {
             throw new ParseException(
                 'Unexpected end of input, expected ' . $this->formatExpectedTokenNames($types) . '.'
             );
-        } elseif (!in_array($token->type, $types)) {
+        } elseif (!in_array($this->currentToken->type, $types)) {
             throw new ParseException(
-                'Unexpected ' . Token::typeDescription($token->type) . ', expected ' . $this->formatExpectedTokenNames($types) . '.'
+                'Unexpected ' . Token::typeDescription($this->currentToken->type) . ', expected ' . $this->formatExpectedTokenNames($types) . '.'
             );
         }
-
-        return $token;
     }
 
     protected function formatExpectedTokenNames(array $types)
@@ -117,12 +116,21 @@ abstract class AbstractParser implements ParserInterface
         return implode(', ', $types) . ' or ' . $lastType;
     }
 
+    protected function nextToken()
+    {
+        $this->previousToken = $this->currentToken;
+
+        next($this->tokens);
+
+        $this->currentToken = current($this->tokens) ?: null;
+    }
+
     /**
      * Record the start of an expression.
      */
     protected function startExpression()
     {
-        $this->tokenStack[] = current($this->tokens);
+        $this->tokenStack[] = $this->currentToken;
     }
 
     /**
@@ -132,28 +140,16 @@ abstract class AbstractParser implements ParserInterface
      */
     protected function endExpression(ExpressionInterface $expression)
     {
-        // Find the end offset of the source for this node ...
-        $index = key($this->tokens);
-
-        // We're at the end of the input stream, so get the last token in
-        // the token stream ...
-        if (null === $index) {
-            $index = count($this->tokens);
-        }
-
-        // The *current* token is the start of the next node, so we need to
-        // look at the *previous* token to find the last token of this
-        // expression ...
         $expression->setTokens(
             array_pop($this->tokenStack),
-            $this->tokens[$index - 1]
+            $this->previousToken
         );
-
-        return $expression;
     }
 
     private $wildcardString;
     private $tokenStack;
+    private $tokens;
+    private $previousToken;
 
-    protected $tokens;
+    protected $currentToken;
 }
