@@ -54,6 +54,11 @@ example above.
 When parenthesis are not present, the `AND` operator has higher precedence than `OR` such that `foo OR bar AND baz` is
 equivalent to `foo OR (bar AND baz)`.
 
+## Contact us
+
+* Follow [@IcecaveStudios](https://twitter.com/IcecaveStudios) on Twitter
+* Visit the [Icecave Studios website](http://icecave.com.au)
+
 <!-- references -->
 [Build Status]: http://img.shields.io/travis/IcecaveStudios/dialekt/develop.svg?style=flat-square
 [Test Coverage]: http://img.shields.io/coveralls/IcecaveStudios/dialekt/develop.svg?style=flat-square
