@@ -9,7 +9,7 @@ class PatternTest extends PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->child1 = new PatternLiteral('foo');
-        $this->child2 = new PatternWildcard;
+        $this->child2 = new PatternWildcard();
         $this->child3 = new PatternLiteral('bar');
         $this->expression = new Pattern($this->child1, $this->child2);
     }

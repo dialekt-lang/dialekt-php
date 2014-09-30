@@ -46,7 +46,7 @@ abstract class AbstractParser implements ParserInterface
     public function parse($expression, LexerInterface $lexer = null)
     {
         if (null === $lexer) {
-            $lexer = new Lexer;
+            $lexer = new Lexer();
         }
 
         return $this->parseTokens(
@@ -65,7 +65,7 @@ abstract class AbstractParser implements ParserInterface
     public function parseTokens(array $tokens)
     {
         if (!$tokens) {
-            return new EmptyExpression;
+            return new EmptyExpression();
         }
 
         $this->tokens = $tokens;

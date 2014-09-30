@@ -98,11 +98,11 @@ class ExpressionParser extends AbstractParser
             PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY
         );
 
-        $expression = new Pattern;
+        $expression = new Pattern();
 
         foreach ($parts as $value) {
             if ($this->wildcardString() === $value) {
-                $expression->add(new PatternWildcard);
+                $expression->add(new PatternWildcard());
             } else {
                 $expression->add(new PatternLiteral($value));
             }

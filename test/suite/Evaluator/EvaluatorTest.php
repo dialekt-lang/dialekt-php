@@ -16,7 +16,7 @@ class EvaluatorTest extends PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
-        $this->evaluator = new Evaluator;
+        $this->evaluator = new Evaluator();
     }
 
     /**
@@ -62,7 +62,7 @@ class EvaluatorTest extends PHPUnit_Framework_TestCase
         $this->evaluator = new Evaluator(true);
         $expression = new Pattern(
             new PatternLiteral('foo'),
-            new PatternWildcard
+            new PatternWildcard()
         );
 
         $this->assertTrue(
@@ -86,7 +86,7 @@ class EvaluatorTest extends PHPUnit_Framework_TestCase
 
         $this->assertTrue(
             $this->evaluator->evaluate(
-                new EmptyExpression,
+                new EmptyExpression(),
                 array('foo')
             )->isMatch()
         );
@@ -229,7 +229,7 @@ class EvaluatorTest extends PHPUnit_Framework_TestCase
     {
         $expression = new Pattern(
             new PatternLiteral('foo'),
-            new PatternWildcard
+            new PatternWildcard()
         );
 
         $result = $this->evaluator->evaluate(
@@ -249,7 +249,7 @@ class EvaluatorTest extends PHPUnit_Framework_TestCase
 
     public function testEvaluateEmptyExpression()
     {
-        $expression = new EmptyExpression;
+        $expression = new EmptyExpression();
 
         $result = $this->evaluator->evaluate(
             $expression,
@@ -270,7 +270,7 @@ class EvaluatorTest extends PHPUnit_Framework_TestCase
     {
         return array(
             array(
-                new EmptyExpression,
+                new EmptyExpression(),
                 array('foo'),
                 false,
             ),
@@ -292,7 +292,7 @@ class EvaluatorTest extends PHPUnit_Framework_TestCase
             array(
                 new Pattern(
                     new PatternLiteral('foo'),
-                    new PatternWildcard
+                    new PatternWildcard()
                 ),
                 array('foobar'),
                 true,

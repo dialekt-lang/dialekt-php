@@ -16,8 +16,8 @@ class ListParserTest extends PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
-        $this->renderer = new ExpressionRenderer;
-        $this->parser = new ListParser;
+        $this->renderer = new ExpressionRenderer();
+        $this->parser = new ListParser();
     }
 
     /**
@@ -65,7 +65,7 @@ class ListParserTest extends PHPUnit_Framework_TestCase
 
     public function testTokens()
     {
-        $lexer = new Lexer;
+        $lexer = new Lexer();
         $tokens = $lexer->lex('a b c');
         $result = $this->parser->parseTokens($tokens);
 
@@ -92,7 +92,7 @@ class ListParserTest extends PHPUnit_Framework_TestCase
         return array(
             'empty expression' => array(
                 '',
-                new EmptyExpression,
+                new EmptyExpression(),
                 array(),
             ),
             'single tag' => array(

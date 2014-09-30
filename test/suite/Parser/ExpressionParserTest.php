@@ -21,8 +21,8 @@ class ExpressionParserTest extends PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
-        $this->renderer = new ExpressionRenderer;
-        $this->parser = new ExpressionParser;
+        $this->renderer = new ExpressionRenderer();
+        $this->parser = new ExpressionParser();
     }
 
     /**
@@ -65,7 +65,7 @@ class ExpressionParserTest extends PHPUnit_Framework_TestCase
 
     public function testParseWithSourceCapture()
     {
-        $lexer = new Lexer;
+        $lexer = new Lexer();
         $tokens = $lexer->lex('a AND (b OR c) AND NOT p*');
         $result = $this->parser->parseTokens($tokens);
 
@@ -104,7 +104,7 @@ class ExpressionParserTest extends PHPUnit_Framework_TestCase
         return array(
             'empty expression' => array(
                 '',
-                new EmptyExpression,
+                new EmptyExpression(),
             ),
             'single tag' => array(
                 'a',
@@ -114,7 +114,7 @@ class ExpressionParserTest extends PHPUnit_Framework_TestCase
                 'a*',
                 new Pattern(
                     new PatternLiteral('a'),
-                    new PatternWildcard
+                    new PatternWildcard()
                 ),
             ),
             'multiple tags' => array(

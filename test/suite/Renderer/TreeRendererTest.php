@@ -26,7 +26,7 @@ class TreeRendererTest extends PHPUnit_Framework_TestCase
 
     public function testConstructorDefaults()
     {
-        $this->renderer = new TreeRenderer;
+        $this->renderer = new TreeRenderer();
 
         $this->assertSame("\n", $this->renderer->endOfLine());
     }
@@ -45,7 +45,7 @@ class TreeRendererTest extends PHPUnit_Framework_TestCase
     {
         return array(
             'empty expression' => array(
-                new EmptyExpression,
+                new EmptyExpression(),
                 'EMPTY',
             ),
             'tag' => array(
@@ -75,7 +75,7 @@ class TreeRendererTest extends PHPUnit_Framework_TestCase
             'pattern' => array(
                 new Pattern(
                     new PatternLiteral('foo'),
-                    new PatternWildcard
+                    new PatternWildcard()
                 ),
                 'PATTERN' . "\r\n" .
                 '  - LITERAL "foo"' . "\r\n" .
@@ -84,7 +84,7 @@ class TreeRendererTest extends PHPUnit_Framework_TestCase
             'escaped pattern' => array(
                 new Pattern(
                     new PatternLiteral('foo"'),
-                    new PatternWildcard
+                    new PatternWildcard()
                 ),
                 'PATTERN' . "\r\n" .
                 '  - LITERAL "foo\\""' . "\r\n" .
