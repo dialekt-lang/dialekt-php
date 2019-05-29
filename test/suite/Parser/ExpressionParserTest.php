@@ -1,23 +1,23 @@
 <?php
-namespace Icecave\Dialekt\Parser;
+namespace Dialekt\Parser;
 
-use Icecave\Dialekt\AST\EmptyExpression;
-use Icecave\Dialekt\AST\LogicalAnd;
-use Icecave\Dialekt\AST\LogicalNot;
-use Icecave\Dialekt\AST\LogicalOr;
-use Icecave\Dialekt\AST\Pattern;
-use Icecave\Dialekt\AST\PatternLiteral;
-use Icecave\Dialekt\AST\PatternWildcard;
-use Icecave\Dialekt\AST\Tag;
-use Icecave\Dialekt\Parser\Exception\ParseException;
-use Icecave\Dialekt\Renderer\ExpressionRenderer;
-use PHPUnit_Framework_TestCase;
+use Dialekt\AST\EmptyExpression;
+use Dialekt\AST\LogicalAnd;
+use Dialekt\AST\LogicalNot;
+use Dialekt\AST\LogicalOr;
+use Dialekt\AST\Pattern;
+use Dialekt\AST\PatternLiteral;
+use Dialekt\AST\PatternWildcard;
+use Dialekt\AST\Tag;
+use Dialekt\Parser\Exception\ParseException;
+use Dialekt\Renderer\ExpressionRenderer;
+use PHPUnit\Framework\TestCase;
 
 /**
- * @covers Icecave\Dialekt\Parser\ExpressionParser
- * @covers Icecave\Dialekt\Parser\AbstractParser
+ * @covers Dialekt\Parser\ExpressionParser
+ * @covers Dialekt\Parser\AbstractParser
  */
-class ExpressionParserTest extends PHPUnit_Framework_TestCase
+class ExpressionParserTest extends TestCase
 {
     public function setUp()
     {

@@ -1,19 +1,19 @@
 <?php
-namespace Icecave\Dialekt\Renderer;
+namespace Dialekt\Renderer;
 
-use Icecave\Dialekt\AST\EmptyExpression;
-use Icecave\Dialekt\AST\ExpressionInterface;
-use Icecave\Dialekt\AST\LogicalAnd;
-use Icecave\Dialekt\AST\LogicalNot;
-use Icecave\Dialekt\AST\LogicalOr;
-use Icecave\Dialekt\AST\Pattern;
-use Icecave\Dialekt\AST\PatternLiteral;
-use Icecave\Dialekt\AST\PatternWildcard;
-use Icecave\Dialekt\AST\Tag;
-use Icecave\Dialekt\AST\VisitorInterface;
-use Icecave\Dialekt\Parser\Parser;
-use Icecave\Dialekt\Parser\Token;
-use Icecave\Dialekt\Renderer\Exception\RenderException;
+use Dialekt\AST\EmptyExpression;
+use Dialekt\AST\ExpressionInterface;
+use Dialekt\AST\LogicalAnd;
+use Dialekt\AST\LogicalNot;
+use Dialekt\AST\LogicalOr;
+use Dialekt\AST\Pattern;
+use Dialekt\AST\PatternLiteral;
+use Dialekt\AST\PatternWildcard;
+use Dialekt\AST\Tag;
+use Dialekt\AST\VisitorInterface;
+use Dialekt\Parser\Parser;
+use Dialekt\Parser\Token;
+use Dialekt\Renderer\Exception\RenderException;
 
 /**
  * Renders an AST expression to an expression string.

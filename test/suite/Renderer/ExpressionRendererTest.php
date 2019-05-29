@@ -1,18 +1,18 @@
 <?php
-namespace Icecave\Dialekt\Renderer;
+namespace Dialekt\Renderer;
 
-use Icecave\Dialekt\AST\EmptyExpression;
-use Icecave\Dialekt\AST\LogicalAnd;
-use Icecave\Dialekt\AST\LogicalNot;
-use Icecave\Dialekt\AST\LogicalOr;
-use Icecave\Dialekt\AST\Pattern;
-use Icecave\Dialekt\AST\PatternLiteral;
-use Icecave\Dialekt\AST\PatternWildcard;
-use Icecave\Dialekt\AST\Tag;
+use Dialekt\AST\EmptyExpression;
+use Dialekt\AST\LogicalAnd;
+use Dialekt\AST\LogicalNot;
+use Dialekt\AST\LogicalOr;
+use Dialekt\AST\Pattern;
+use Dialekt\AST\PatternLiteral;
+use Dialekt\AST\PatternWildcard;
+use Dialekt\AST\Tag;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
-class ExpressionRendererTest extends PHPUnit_Framework_TestCase
+class ExpressionRendererTest extends TestCase
 {
     public function setUp()
     {
@@ -31,8 +31,8 @@ class ExpressionRendererTest extends PHPUnit_Framework_TestCase
 
     public function testRenderFailureWithWildcardInPatternLiteral()
     {
-        $this->setExpectedException(
-            'Icecave\Dialekt\Renderer\Exception\RenderException',
+        $this->expectException(
+            'Dialekt\Renderer\Exception\RenderException',
             'The pattern literal "foo*" contains the wildcard string "*".'
         );
 

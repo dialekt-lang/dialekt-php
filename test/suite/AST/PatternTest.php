@@ -1,10 +1,10 @@
 <?php
-namespace Icecave\Dialekt\AST;
+namespace Dialekt\AST;
 
 use Phake;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
-class PatternTest extends PHPUnit_Framework_TestCase
+class PatternTest extends TestCase
 {
     public function setUp()
     {
@@ -34,7 +34,7 @@ class PatternTest extends PHPUnit_Framework_TestCase
 
     public function testAccept()
     {
-        $visitor = Phake::mock('Icecave\Dialekt\AST\VisitorInterface');
+        $visitor = Phake::mock('Dialekt\AST\VisitorInterface');
 
         Phake::when($visitor)
             ->visitPattern(Phake::anyParameters())

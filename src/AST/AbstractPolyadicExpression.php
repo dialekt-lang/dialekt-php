@@ -1,5 +1,5 @@
 <?php
-namespace Icecave\Dialekt\AST;
+namespace Dialekt\AST;
 
 /**
  * A base class providing common functionality for polyadic operators.

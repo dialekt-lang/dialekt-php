@@ -1,9 +1,9 @@
 <?php
-namespace Icecave\Dialekt\Parser;
+namespace Dialekt\Parser;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
-class LexerTest extends PHPUnit_Framework_TestCase
+class LexerTest extends TestCase
 {
     public function setUp()
     {
@@ -22,8 +22,8 @@ class LexerTest extends PHPUnit_Framework_TestCase
 
     public function testLexFailureInQuotedString()
     {
-        $this->setExpectedException(
-            'Icecave\Dialekt\Parser\Exception\ParseException',
+        $this->expectException(
+            'Dialekt\Parser\Exception\ParseException',
             'Expected closing quote.'
         );
 
@@ -32,8 +32,8 @@ class LexerTest extends PHPUnit_Framework_TestCase
 
     public function testLexFailureInQuotedStringEscape()
     {
-        $this->setExpectedException(
-            'Icecave\Dialekt\Parser\Exception\ParseException',
+        $this->expectException(
+            'Dialekt\Parser\Exception\ParseException',
             'Expected character after backslash.'
         );
 

@@ -1,5 +1,5 @@
 <?php
-namespace Icecave\Dialekt\AST;
+namespace Dialekt\AST;
 
 /**
  * Interface for node visitors.

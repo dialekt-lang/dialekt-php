@@ -1,15 +1,15 @@
 <?php
-namespace Icecave\Dialekt\Evaluator;
+namespace Dialekt\Evaluator;
 
-use Icecave\Dialekt\AST\ExpressionInterface;
+use Dialekt\AST\ExpressionInterface;
 use Phake;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
-class ExpressionResultTest extends PHPUnit_Framework_TestCase
+class ExpressionResultTest extends TestCase
 {
     public function setUp()
     {
-        $this->expression = Phake::mock('Icecave\Dialekt\AST\ExpressionInterface');
+        $this->expression = Phake::mock('Dialekt\AST\ExpressionInterface');
 
         $this->result = new ExpressionResult(
             $this->expression,

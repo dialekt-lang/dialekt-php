@@ -1,5 +1,5 @@
 <?php
-namespace Icecave\Dialekt\AST;
+namespace Dialekt\AST;
 
 /**
  * Represents the actual wildcard portion of a pattern expression.

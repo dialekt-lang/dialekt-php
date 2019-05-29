@@ -1,18 +1,18 @@
 <?php
-namespace Icecave\Dialekt\Parser;
+namespace Dialekt\Parser;
 
-use Icecave\Dialekt\AST\EmptyExpression;
-use Icecave\Dialekt\AST\LogicalAnd;
-use Icecave\Dialekt\AST\Tag;
-use Icecave\Dialekt\Parser\Exception\ParseException;
-use Icecave\Dialekt\Renderer\ExpressionRenderer;
-use PHPUnit_Framework_TestCase;
+use Dialekt\AST\EmptyExpression;
+use Dialekt\AST\LogicalAnd;
+use Dialekt\AST\Tag;
+use Dialekt\Parser\Exception\ParseException;
+use Dialekt\Renderer\ExpressionRenderer;
+use PHPUnit\Framework\TestCase;
 
 /**
- * @covers Icecave\Dialekt\Parser\ListParser
- * @covers Icecave\Dialekt\Parser\AbstractParser
+ * @covers Dialekt\Parser\ListParser
+ * @covers Dialekt\Parser\AbstractParser
  */
-class ListParserTest extends PHPUnit_Framework_TestCase
+class ListParserTest extends TestCase
 {
     public function setUp()
     {
@@ -45,8 +45,8 @@ class ListParserTest extends PHPUnit_Framework_TestCase
 
     public function testParseFailureWithNonString()
     {
-        $this->setExpectedException(
-            'Icecave\Dialekt\Parser\Exception\ParseException',
+        $this->expectException(
+            'Dialekt\Parser\Exception\ParseException',
             'Unexpected AND operator, expected tag.'
         );
 
@@ -55,8 +55,8 @@ class ListParserTest extends PHPUnit_Framework_TestCase
 
     public function testParseFailureWithWildcardCharacter()
     {
-        $this->setExpectedException(
-            'Icecave\Dialekt\Parser\Exception\ParseException',
+        $this->expectException(
+            'Dialekt\Parser\Exception\ParseException',
             'Unexpected wildcard string "*", in tag "foo*".'
         );
 

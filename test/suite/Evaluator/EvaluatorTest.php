@@ -1,18 +1,18 @@
 <?php
-namespace Icecave\Dialekt\Evaluator;
+namespace Dialekt\Evaluator;
 
-use Icecave\Dialekt\AST\EmptyExpression;
-use Icecave\Dialekt\AST\ExpressionInterface;
-use Icecave\Dialekt\AST\LogicalAnd;
-use Icecave\Dialekt\AST\LogicalNot;
-use Icecave\Dialekt\AST\LogicalOr;
-use Icecave\Dialekt\AST\Pattern;
-use Icecave\Dialekt\AST\PatternLiteral;
-use Icecave\Dialekt\AST\PatternWildcard;
-use Icecave\Dialekt\AST\Tag;
-use PHPUnit_Framework_TestCase;
+use Dialekt\AST\EmptyExpression;
+use Dialekt\AST\ExpressionInterface;
+use Dialekt\AST\LogicalAnd;
+use Dialekt\AST\LogicalNot;
+use Dialekt\AST\LogicalOr;
+use Dialekt\AST\Pattern;
+use Dialekt\AST\PatternLiteral;
+use Dialekt\AST\PatternWildcard;
+use Dialekt\AST\Tag;
+use PHPUnit\Framework\TestCase;
 
-class EvaluatorTest extends PHPUnit_Framework_TestCase
+class EvaluatorTest extends TestCase
 {
     public function setUp()
     {
@@ -27,7 +27,7 @@ class EvaluatorTest extends PHPUnit_Framework_TestCase
         $result = $this->evaluator->evaluate($expression, $tags);
 
         $this->assertInstanceOf(
-            'Icecave\Dialekt\Evaluator\EvaluationResult',
+            'Dialekt\Evaluator\EvaluationResult',
             $result
         );
 
@@ -108,29 +108,29 @@ class EvaluatorTest extends PHPUnit_Framework_TestCase
             array('foo', 'bar', 'spam')
         );
 
-        $this->assertInstanceOf('Icecave\Dialekt\Evaluator\EvaluationResult', $result);
+        $this->assertInstanceOf('Dialekt\Evaluator\EvaluationResult', $result);
         $this->assertTrue($result->isMatch());
 
         $expressionResult = $result->resultOf($expression);
-        $this->assertInstanceOf('Icecave\Dialekt\Evaluator\ExpressionResult', $expressionResult);
+        $this->assertInstanceOf('Dialekt\Evaluator\ExpressionResult', $expressionResult);
         $this->assertTrue($expressionResult->isMatch());
         $this->assertEquals(array('foo', 'bar'), $expressionResult->matchedTags());
         $this->assertEquals(array('spam'), $expressionResult->unmatchedTags());
 
         $expressionResult = $result->resultOf($innerExpression1);
-        $this->assertInstanceOf('Icecave\Dialekt\Evaluator\ExpressionResult', $expressionResult);
+        $this->assertInstanceOf('Dialekt\Evaluator\ExpressionResult', $expressionResult);
         $this->assertTrue($expressionResult->isMatch());
         $this->assertEquals(array('foo'), $expressionResult->matchedTags());
         $this->assertEquals(array('bar', 'spam'), $expressionResult->unmatchedTags());
 
         $expressionResult = $result->resultOf($innerExpression2);
-        $this->assertInstanceOf('Icecave\Dialekt\Evaluator\ExpressionResult', $expressionResult);
+        $this->assertInstanceOf('Dialekt\Evaluator\ExpressionResult', $expressionResult);
         $this->assertTrue($expressionResult->isMatch());
         $this->assertEquals(array('bar'), $expressionResult->matchedTags());
         $this->assertEquals(array('foo', 'spam'), $expressionResult->unmatchedTags());
 
         $expressionResult = $result->resultOf($innerExpression3);
-        $this->assertInstanceOf('Icecave\Dialekt\Evaluator\ExpressionResult', $expressionResult);
+        $this->assertInstanceOf('Dialekt\Evaluator\ExpressionResult', $expressionResult);
         $this->assertTrue($expressionResult->isMatch());
         $this->assertEquals(array('bar'), $expressionResult->matchedTags());
         $this->assertEquals(array('foo', 'spam'), $expressionResult->unmatchedTags());
@@ -152,29 +152,29 @@ class EvaluatorTest extends PHPUnit_Framework_TestCase
             array('foo', 'bar', 'spam')
         );
 
-        $this->assertInstanceOf('Icecave\Dialekt\Evaluator\EvaluationResult', $result);
+        $this->assertInstanceOf('Dialekt\Evaluator\EvaluationResult', $result);
         $this->assertTrue($result->isMatch());
 
         $expressionResult = $result->resultOf($expression);
-        $this->assertInstanceOf('Icecave\Dialekt\Evaluator\ExpressionResult', $expressionResult);
+        $this->assertInstanceOf('Dialekt\Evaluator\ExpressionResult', $expressionResult);
         $this->assertTrue($expressionResult->isMatch());
         $this->assertEquals(array('foo', 'bar'), $expressionResult->matchedTags());
         $this->assertEquals(array('spam'), $expressionResult->unmatchedTags());
 
         $expressionResult = $result->resultOf($innerExpression1);
-        $this->assertInstanceOf('Icecave\Dialekt\Evaluator\ExpressionResult', $expressionResult);
+        $this->assertInstanceOf('Dialekt\Evaluator\ExpressionResult', $expressionResult);
         $this->assertTrue($expressionResult->isMatch());
         $this->assertEquals(array('foo'), $expressionResult->matchedTags());
         $this->assertEquals(array('bar', 'spam'), $expressionResult->unmatchedTags());
 
         $expressionResult = $result->resultOf($innerExpression2);
-        $this->assertInstanceOf('Icecave\Dialekt\Evaluator\ExpressionResult', $expressionResult);
+        $this->assertInstanceOf('Dialekt\Evaluator\ExpressionResult', $expressionResult);
         $this->assertTrue($expressionResult->isMatch());
         $this->assertEquals(array('bar'), $expressionResult->matchedTags());
         $this->assertEquals(array('foo', 'spam'), $expressionResult->unmatchedTags());
 
         $expressionResult = $result->resultOf($innerExpression3);
-        $this->assertInstanceOf('Icecave\Dialekt\Evaluator\ExpressionResult', $expressionResult);
+        $this->assertInstanceOf('Dialekt\Evaluator\ExpressionResult', $expressionResult);
         $this->assertFalse($expressionResult->isMatch());
         $this->assertEquals(array(), $expressionResult->matchedTags());
         $this->assertEquals(array('foo', 'bar', 'spam'), $expressionResult->unmatchedTags());
@@ -190,17 +190,17 @@ class EvaluatorTest extends PHPUnit_Framework_TestCase
             array('foo', 'bar')
         );
 
-        $this->assertInstanceOf('Icecave\Dialekt\Evaluator\EvaluationResult', $result);
+        $this->assertInstanceOf('Dialekt\Evaluator\EvaluationResult', $result);
         $this->assertFalse($result->isMatch());
 
         $expressionResult = $result->resultOf($expression);
-        $this->assertInstanceOf('Icecave\Dialekt\Evaluator\ExpressionResult', $expressionResult);
+        $this->assertInstanceOf('Dialekt\Evaluator\ExpressionResult', $expressionResult);
         $this->assertFalse($expressionResult->isMatch());
         $this->assertEquals(array('bar'), $expressionResult->matchedTags());
         $this->assertEquals(array('foo'), $expressionResult->unmatchedTags());
 
         $expressionResult = $result->resultOf($innerExpression);
-        $this->assertInstanceOf('Icecave\Dialekt\Evaluator\ExpressionResult', $expressionResult);
+        $this->assertInstanceOf('Dialekt\Evaluator\ExpressionResult', $expressionResult);
         $this->assertTrue($expressionResult->isMatch());
         $this->assertEquals(array('foo'), $expressionResult->matchedTags());
         $this->assertEquals(array('bar'), $expressionResult->unmatchedTags());
@@ -215,11 +215,11 @@ class EvaluatorTest extends PHPUnit_Framework_TestCase
             array('foo', 'bar')
         );
 
-        $this->assertInstanceOf('Icecave\Dialekt\Evaluator\EvaluationResult', $result);
+        $this->assertInstanceOf('Dialekt\Evaluator\EvaluationResult', $result);
         $this->assertTrue($result->isMatch());
 
         $expressionResult = $result->resultOf($expression);
-        $this->assertInstanceOf('Icecave\Dialekt\Evaluator\ExpressionResult', $expressionResult);
+        $this->assertInstanceOf('Dialekt\Evaluator\ExpressionResult', $expressionResult);
         $this->assertTrue($expressionResult->isMatch());
         $this->assertEquals(array('foo'), $expressionResult->matchedTags());
         $this->assertEquals(array('bar'), $expressionResult->unmatchedTags());
@@ -237,11 +237,11 @@ class EvaluatorTest extends PHPUnit_Framework_TestCase
             array('foo1', 'foo2', 'bar')
         );
 
-        $this->assertInstanceOf('Icecave\Dialekt\Evaluator\EvaluationResult', $result);
+        $this->assertInstanceOf('Dialekt\Evaluator\EvaluationResult', $result);
         $this->assertTrue($result->isMatch());
 
         $expressionResult = $result->resultOf($expression);
-        $this->assertInstanceOf('Icecave\Dialekt\Evaluator\ExpressionResult', $expressionResult);
+        $this->assertInstanceOf('Dialekt\Evaluator\ExpressionResult', $expressionResult);
         $this->assertTrue($expressionResult->isMatch());
         $this->assertEquals(array('foo1', 'foo2'), $expressionResult->matchedTags());
         $this->assertEquals(array('bar'), $expressionResult->unmatchedTags());
@@ -256,11 +256,11 @@ class EvaluatorTest extends PHPUnit_Framework_TestCase
             array('foo', 'bar')
         );
 
-        $this->assertInstanceOf('Icecave\Dialekt\Evaluator\EvaluationResult', $result);
+        $this->assertInstanceOf('Dialekt\Evaluator\EvaluationResult', $result);
         $this->assertFalse($result->isMatch());
 
         $expressionResult = $result->resultOf($expression);
-        $this->assertInstanceOf('Icecave\Dialekt\Evaluator\ExpressionResult', $expressionResult);
+        $this->assertInstanceOf('Dialekt\Evaluator\ExpressionResult', $expressionResult);
         $this->assertFalse($expressionResult->isMatch());
         $this->assertEquals(array(), $expressionResult->matchedTags());
         $this->assertEquals(array('foo', 'bar'), $expressionResult->unmatchedTags());

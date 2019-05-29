@@ -1,5 +1,5 @@
 <?php
-namespace Icecave\Dialekt\Renderer\Exception;
+namespace Dialekt\Renderer\Exception;
 
 use Exception;
 

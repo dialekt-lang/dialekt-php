@@ -1,6 +1,6 @@
 {
-    "name": "icecave/dialekt",
-    "description": "A simple language for representing boolean expressions.",
+    "name": "dialekt/dialekt",
+    "description": "A boolean expression DSL.",
     "keywords": [
         "tag",
         "label",
@@ -11,29 +11,27 @@
         "logic",
         "logical"
     ],
-    "homepage": "https://github.com/IcecaveStudios/dialekt",
+    "homepage": "https://github.com/dialekt-lang/dialekt-php",
     "license": "MIT",
     "authors": [
         {
             "name": "James Harris",
-            "email": "james.harris@icecave.com.au",
+            "email": "mailjamesharris@gmail.com",
             "homepage": "https://github.com/jmalloc"
         }
     ],
     "require": {
-        "php": ">=5.3"
+        "php": ">=7.1"
     },
     "require-dev": {
-        "icecave/archer": "~1"
+        "phake/phake": "^3",
+        "phpunit/phpunit": "^7"
     },
-    "autoload": {
-        "psr-4": {
-            "Icecave\\Dialekt\\": "src"
-        }
-    },
-    "extra": {
-        "branch-alias": {
-            "dev-develop": "0.2.x-dev"
+    "autoload": { "psr-4": { "Dialekt\\": "src" } },
+    "config": {
+        "sort-packages": true,
+        "platform": {
+            "php": "7.1"
         }
     }
 }

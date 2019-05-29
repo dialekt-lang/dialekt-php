@@ -1,8 +1,8 @@
 <?php
-namespace Icecave\Dialekt\Parser;
+namespace Dialekt\Parser;
 
-use Icecave\Dialekt\AST\ExpressionInterface;
-use Icecave\Dialekt\Parser\Exception\ParseException;
+use Dialekt\AST\ExpressionInterface;
+use Dialekt\Parser\Exception\ParseException;
 
 interface ParserInterface
 {

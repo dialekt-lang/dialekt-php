@@ -1,5 +1,5 @@
 <?php
-namespace Icecave\Dialekt\AST;
+namespace Dialekt\AST;
 
 /**
  * Represents a literal (exact-match) portion of a pattern expression.

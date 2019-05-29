@@ -1,5 +1,5 @@
 <?php
-namespace Icecave\Dialekt\AST;
+namespace Dialekt\AST;
 
 /**
  * An AST node that represents a pattern-match expression.

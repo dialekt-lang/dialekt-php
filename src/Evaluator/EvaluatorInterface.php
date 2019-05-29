@@ -1,7 +1,7 @@
 <?php
-namespace Icecave\Dialekt\Evaluator;
+namespace Dialekt\Evaluator;
 
-use Icecave\Dialekt\AST\ExpressionInterface;
+use Dialekt\AST\ExpressionInterface;
 
 /**
  * Interface for expression evaluators.

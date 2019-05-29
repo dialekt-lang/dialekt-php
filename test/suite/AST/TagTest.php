@@ -1,10 +1,10 @@
 <?php
-namespace Icecave\Dialekt\AST;
+namespace Dialekt\AST;
 
 use Phake;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
-class TagTest extends PHPUnit_Framework_TestCase
+class TagTest extends TestCase
 {
     public function setUp()
     {
@@ -18,7 +18,7 @@ class TagTest extends PHPUnit_Framework_TestCase
 
     public function testAccept()
     {
-        $visitor = Phake::mock('Icecave\Dialekt\AST\VisitorInterface');
+        $visitor = Phake::mock('Dialekt\AST\VisitorInterface');
 
         Phake::when($visitor)
             ->visitTag(Phake::anyParameters())

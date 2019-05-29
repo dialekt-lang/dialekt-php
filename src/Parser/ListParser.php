@@ -1,10 +1,10 @@
 <?php
-namespace Icecave\Dialekt\Parser;
+namespace Dialekt\Parser;
 
-use Icecave\Dialekt\AST\EmptyExpression;
-use Icecave\Dialekt\AST\LogicalAnd;
-use Icecave\Dialekt\AST\Tag;
-use Icecave\Dialekt\Parser\Exception\ParseException;
+use Dialekt\AST\EmptyExpression;
+use Dialekt\AST\LogicalAnd;
+use Dialekt\AST\Tag;
+use Dialekt\Parser\Exception\ParseException;
 
 /**
  * Parses a list of tags.

@@ -1,5 +1,5 @@
 <?php
-namespace Icecave\Dialekt\Parser;
+namespace Dialekt\Parser;
 
 use LogicException;
 

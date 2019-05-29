@@ -1,14 +1,14 @@
 <?php
-namespace Icecave\Dialekt\AST;
+namespace Dialekt\AST;
 
 use Phake;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
-class AbstractExpressionTest extends PHPUnit_Framework_TestCase
+class AbstractExpressionTest extends TestCase
 {
     public function setUp()
     {
-        $this->node = Phake::partialMock('Icecave\Dialekt\AST\AbstractExpression');
+        $this->node = Phake::partialMock('Dialekt\AST\AbstractExpression');
     }
 
     public function testDefaults()
@@ -19,8 +19,8 @@ class AbstractExpressionTest extends PHPUnit_Framework_TestCase
 
     public function testSetTokens()
     {
-        $firstToken = Phake::mock('Icecave\Dialekt\Parser\Token');
-        $lastToken = Phake::mock('Icecave\Dialekt\Parser\Token');
+        $firstToken = Phake::mock('Dialekt\Parser\Token');
+        $lastToken = Phake::mock('Dialekt\Parser\Token');
 
         $this->node->setTokens($firstToken, $lastToken);
 

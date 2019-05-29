@@ -1,9 +1,9 @@
 <?php
-namespace Icecave\Dialekt\Parser;
+namespace Dialekt\Parser;
 
-use Icecave\Dialekt\AST\EmptyExpression;
-use Icecave\Dialekt\AST\ExpressionInterface;
-use Icecave\Dialekt\Parser\Exception\ParseException;
+use Dialekt\AST\EmptyExpression;
+use Dialekt\AST\ExpressionInterface;
+use Dialekt\Parser\Exception\ParseException;
 
 abstract class AbstractParser implements ParserInterface
 {
@@ -103,7 +103,7 @@ abstract class AbstractParser implements ParserInterface
     protected function formatExpectedTokenNames(array $types)
     {
         $types = array_map(
-            'Icecave\Dialekt\Parser\Token::typeDescription',
+            'Dialekt\Parser\Token::typeDescription',
             $types
         );
 

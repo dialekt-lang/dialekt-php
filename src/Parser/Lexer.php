@@ -1,7 +1,7 @@
 <?php
-namespace Icecave\Dialekt\Parser;
+namespace Dialekt\Parser;
 
-use Icecave\Dialekt\Parser\Exception\ParseException;
+use Dialekt\Parser\Exception\ParseException;
 
 class Lexer implements LexerInterface
 {

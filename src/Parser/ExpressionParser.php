@@ -1,14 +1,14 @@
 <?php
-namespace Icecave\Dialekt\Parser;
+namespace Dialekt\Parser;
 
-use Icecave\Dialekt\AST\ExpressionInterface;
-use Icecave\Dialekt\AST\LogicalAnd;
-use Icecave\Dialekt\AST\LogicalNot;
-use Icecave\Dialekt\AST\LogicalOr;
-use Icecave\Dialekt\AST\Pattern;
-use Icecave\Dialekt\AST\PatternLiteral;
-use Icecave\Dialekt\AST\PatternWildcard;
-use Icecave\Dialekt\AST\Tag;
+use Dialekt\AST\ExpressionInterface;
+use Dialekt\AST\LogicalAnd;
+use Dialekt\AST\LogicalNot;
+use Dialekt\AST\LogicalOr;
+use Dialekt\AST\Pattern;
+use Dialekt\AST\PatternLiteral;
+use Dialekt\AST\PatternWildcard;
+use Dialekt\AST\Tag;
 
 class ExpressionParser extends AbstractParser
 {
@@ -231,8 +231,8 @@ class ExpressionParser extends AbstractParser
     }
 
     private static $operatorClasses = array(
-        Token::LOGICAL_AND => 'Icecave\Dialekt\AST\LogicalAnd',
-        Token::LOGICAL_OR  => 'Icecave\Dialekt\AST\LogicalOr',
+        Token::LOGICAL_AND => 'Dialekt\AST\LogicalAnd',
+        Token::LOGICAL_OR  => 'Dialekt\AST\LogicalOr',
     );
 
     private static $operatorPrecedence = array(

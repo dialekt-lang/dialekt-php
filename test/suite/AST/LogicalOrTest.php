@@ -1,14 +1,14 @@
 <?php
-namespace Icecave\Dialekt\AST;
+namespace Dialekt\AST;
 
 use Phake;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
- * @covers Icecave\Dialekt\AST\LogicalOr
- * @covers Icecave\Dialekt\AST\AbstractPolyadicExpression
+ * @covers Dialekt\AST\LogicalOr
+ * @covers Dialekt\AST\AbstractPolyadicExpression
  */
-class LogicalOrTest extends PHPUnit_Framework_TestCase
+class LogicalOrTest extends TestCase
 {
     public function setUp()
     {
@@ -38,7 +38,7 @@ class LogicalOrTest extends PHPUnit_Framework_TestCase
 
     public function testAccept()
     {
-        $visitor = Phake::mock('Icecave\Dialekt\AST\VisitorInterface');
+        $visitor = Phake::mock('Dialekt\AST\VisitorInterface');
 
         Phake::when($visitor)
             ->visitLogicalOr(Phake::anyParameters())

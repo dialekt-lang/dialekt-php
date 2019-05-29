@@ -1,7 +1,7 @@
 <?php
-namespace Icecave\Dialekt\AST;
+namespace Dialekt\AST;
 
-use Icecave\Dialekt\Parser\Token;
+use Dialekt\Parser\Token;
 
 /**
  * A base class providing common functionality for expressions.

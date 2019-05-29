@@ -1,7 +1,7 @@
 <?php
-namespace Icecave\Dialekt\Renderer;
+namespace Dialekt\Renderer;
 
-use Icecave\Dialekt\AST\ExpressionInterface;
+use Dialekt\AST\ExpressionInterface;
 
 interface RendererInterface
 {
