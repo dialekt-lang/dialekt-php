@@ -19,6 +19,30 @@ use Icecave\Dialekt\AST\VisitorInterface;
 class TreeRenderer implements RendererInterface, VisitorInterface
 {
     /**
+     * Construct a new tree renderer,
+     *
+     * @param string|null $endOfLine The end-of-line string to use.
+     */
+    public function __construct($endOfLine = null)
+    {
+        if (null === $endOfLine) {
+            $endOfLine = "\n";
+        }
+
+        $this->endOfLine = $endOfLine;
+    }
+
+    /**
+     * Get the end-of-line string.
+     *
+     * @return string The end-of-line string.
+     */
+    public function endOfLine()
+    {
+        return $this->endOfLine;
+    }
+
+    /**
      * Render an expression to a string.
      *
      * @param ExpressionInterface $expression The expression to render.
@@ -41,7 +65,7 @@ class TreeRenderer implements RendererInterface, VisitorInterface
      */
     public function visitLogicalAnd(LogicalAnd $node)
     {
-        return 'AND' . PHP_EOL . $this->renderChildren($node);
+        return 'AND' . $this->endOfLine() . $this->renderChildren($node);
     }
 
     /**
@@ -55,7 +79,7 @@ class TreeRenderer implements RendererInterface, VisitorInterface
      */
     public function visitLogicalOr(LogicalOr $node)
     {
-        return 'OR' . PHP_EOL . $this->renderChildren($node);
+        return 'OR' . $this->endOfLine() . $this->renderChildren($node);
     }
 
     /**
@@ -71,7 +95,7 @@ class TreeRenderer implements RendererInterface, VisitorInterface
     {
         $child = $node->child()->accept($this);
 
-        return 'NOT' . PHP_EOL . $this->indent('- ' . $child);
+        return 'NOT' . $this->endOfLine() . $this->indent('- ' . $child);
     }
 
     /**
@@ -99,7 +123,7 @@ class TreeRenderer implements RendererInterface, VisitorInterface
      */
     public function visitPattern(Pattern $node)
     {
-        return 'PATTERN' . PHP_EOL . $this->renderChildren($node);
+        return 'PATTERN' . $this->endOfLine() . $this->renderChildren($node);
     }
 
     /**
@@ -151,7 +175,7 @@ class TreeRenderer implements RendererInterface, VisitorInterface
         foreach ($node->children() as $n) {
             $output .= $this->indent(
                 '- ' . $n->accept($this)
-            ) . PHP_EOL;
+            ) . $this->endOfLine();
         }
 
         return rtrim($output);
@@ -159,8 +183,10 @@ class TreeRenderer implements RendererInterface, VisitorInterface
 
     private function indent($string)
     {
-        return '  ' . str_replace(PHP_EOL, PHP_EOL . '  ', $string);
+        $endOfLine = $this->endOfLine();
+
+        return '  ' . str_replace($endOfLine, $endOfLine . '  ', $string);
     }
 
-    private $indentLevel = 0;
+    private $endOfLine;
 }

@@ -3,7 +3,7 @@ namespace Icecave\Dialekt\Parser;
 
 use LogicException;
 
-final class Token
+class Token
 {
     const WILDCARD_CHARACTER = '*';
 
@@ -14,10 +14,20 @@ final class Token
     const OPEN_BRACKET  = 6;
     const CLOSE_BRACKET = 7;
 
-    public function __construct($type, $value)
-    {
+    public function __construct(
+        $type,
+        $value,
+        $startOffset,
+        $endOffset,
+        $lineNumber,
+        $columnNumber
+    ) {
         $this->type = $type;
         $this->value = $value;
+        $this->startOffset = $startOffset;
+        $this->endOffset = $endOffset;
+        $this->lineNumber = $lineNumber;
+        $this->columnNumber = $columnNumber;
     }
 
     public static function typeDescription($type)
@@ -42,4 +52,8 @@ final class Token
 
     public $type;
     public $value;
+    public $startOffset;
+    public $endOffset;
+    public $lineNumber;
+    public $columnNumber;
 }

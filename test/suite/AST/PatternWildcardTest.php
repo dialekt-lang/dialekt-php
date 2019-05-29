@@ -8,7 +8,7 @@ class PatternWildcardTest extends PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
-        $this->node = new PatternWildcard;
+        $this->node = new PatternWildcard();
     }
 
     public function testAccept()

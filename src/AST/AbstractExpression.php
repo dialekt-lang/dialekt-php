@@ -4,25 +4,29 @@ namespace Icecave\Dialekt\AST;
 use Icecave\Dialekt\Parser\Token;
 
 /**
- * An AST node that is an expression.
- *
- * Not all nodes in the tree represent an entire (sub-)expression.
+ * A base class providing common functionality for expressions.
  */
-interface ExpressionInterface extends NodeInterface
+abstract class AbstractExpression implements ExpressionInterface
 {
     /**
      * Fetch the first token from the source that is part of this expression.
      *
      * @return Token|null The first token from this expression.
      */
-    public function firstToken();
+    public function firstToken()
+    {
+        return $this->firstToken;
+    }
 
     /**
      * Fetch the last token from the source that is part of this expression.
      *
      * @return Token|null The last token from this expression.
      */
-    public function lastToken();
+    public function lastToken()
+    {
+        return $this->lastToken;
+    }
 
     /**
      * Set the delimiting tokens for this expression.
@@ -30,5 +34,12 @@ interface ExpressionInterface extends NodeInterface
      * @param Token $firstToken The first token from this expression.
      * @param Token $lastToken  The last token from this expression.
      */
-    public function setTokens(Token $firstToken, Token $lastToken);
+    public function setTokens(Token $firstToken, Token $lastToken)
+    {
+        $this->firstToken = $firstToken;
+        $this->lastToken = $lastToken;
+    }
+
+    private $firstToken;
+    private $lastToken;
 }

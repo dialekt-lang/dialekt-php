@@ -16,7 +16,19 @@ class TreeRendererTest extends PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
-        $this->renderer = new TreeRenderer;
+        $this->renderer = new TreeRenderer("\r\n");
+    }
+
+    public function testConstructor()
+    {
+        $this->assertSame("\r\n", $this->renderer->endOfLine());
+    }
+
+    public function testConstructorDefaults()
+    {
+        $this->renderer = new TreeRenderer();
+
+        $this->assertSame("\n", $this->renderer->endOfLine());
     }
 
     /**
@@ -33,7 +45,7 @@ class TreeRendererTest extends PHPUnit_Framework_TestCase
     {
         return array(
             'empty expression' => array(
-                new EmptyExpression,
+                new EmptyExpression(),
                 'EMPTY',
             ),
             'tag' => array(
@@ -63,19 +75,19 @@ class TreeRendererTest extends PHPUnit_Framework_TestCase
             'pattern' => array(
                 new Pattern(
                     new PatternLiteral('foo'),
-                    new PatternWildcard
+                    new PatternWildcard()
                 ),
-                'PATTERN' . PHP_EOL .
-                '  - LITERAL "foo"' . PHP_EOL .
+                'PATTERN' . "\r\n" .
+                '  - LITERAL "foo"' . "\r\n" .
                 '  - WILDCARD',
             ),
             'escaped pattern' => array(
                 new Pattern(
                     new PatternLiteral('foo"'),
-                    new PatternWildcard
+                    new PatternWildcard()
                 ),
-                'PATTERN' . PHP_EOL .
-                '  - LITERAL "foo\\""' . PHP_EOL .
+                'PATTERN' . "\r\n" .
+                '  - LITERAL "foo\\""' . "\r\n" .
                 '  - WILDCARD',
             ),
             'logical and' => array(
@@ -84,9 +96,9 @@ class TreeRendererTest extends PHPUnit_Framework_TestCase
                     new Tag('b'),
                     new Tag('c')
                 ),
-                'AND' . PHP_EOL .
-                '  - TAG "a"' . PHP_EOL .
-                '  - TAG "b"' . PHP_EOL .
+                'AND' . "\r\n" .
+                '  - TAG "a"' . "\r\n" .
+                '  - TAG "b"' . "\r\n" .
                 '  - TAG "c"',
             ),
             'logical or' => array(
@@ -95,16 +107,16 @@ class TreeRendererTest extends PHPUnit_Framework_TestCase
                     new Tag('b'),
                     new Tag('c')
                 ),
-                'OR' . PHP_EOL .
-                '  - TAG "a"' . PHP_EOL .
-                '  - TAG "b"' . PHP_EOL .
+                'OR' . "\r\n" .
+                '  - TAG "a"' . "\r\n" .
+                '  - TAG "b"' . "\r\n" .
                 '  - TAG "c"',
             ),
             'logical not' => array(
                 new LogicalNot(
                     new Tag('a')
                 ),
-                'NOT' . PHP_EOL .
+                'NOT' . "\r\n" .
                 '  - TAG "a"',
             ),
         );

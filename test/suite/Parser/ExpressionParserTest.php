@@ -11,15 +11,18 @@ use Icecave\Dialekt\AST\PatternWildcard;
 use Icecave\Dialekt\AST\Tag;
 use Icecave\Dialekt\Parser\Exception\ParseException;
 use Icecave\Dialekt\Renderer\ExpressionRenderer;
-
 use PHPUnit_Framework_TestCase;
 
+/**
+ * @covers Icecave\Dialekt\Parser\ExpressionParser
+ * @covers Icecave\Dialekt\Parser\AbstractParser
+ */
 class ExpressionParserTest extends PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
-        $this->parser = new ExpressionParser;
-        $this->renderer = new ExpressionRenderer;
+        $this->renderer = new ExpressionRenderer();
+        $this->parser = new ExpressionParser();
     }
 
     /**
@@ -33,10 +36,6 @@ class ExpressionParserTest extends PHPUnit_Framework_TestCase
             $this->renderer->render($expectedResult),
             $this->renderer->render($result)
         );
-
-        if ($expectedResult !== $result) {
-            $this->assertEquals($expectedResult, $result);
-        }
     }
 
     /**
@@ -54,7 +53,7 @@ class ExpressionParserTest extends PHPUnit_Framework_TestCase
 
     public function testParseUsingLogicalOrAsDefaultOperator()
     {
-        $this->parser = new ExpressionParser(null, true);
+        $this->parser->setLogicalOrByDefault(true);
 
         $result = $this->parser->parse('a and b c and d');
 
@@ -64,12 +63,48 @@ class ExpressionParserTest extends PHPUnit_Framework_TestCase
         );
     }
 
+    public function testParseWithSourceCapture()
+    {
+        $lexer = new Lexer();
+        $tokens = $lexer->lex('a AND (b OR c) AND NOT p*');
+        $result = $this->parser->parseTokens($tokens);
+
+        $this->assertSame($tokens[0], $result->firstToken());
+        $this->assertSame($tokens[9], $result->lastToken());
+
+        $children = $result->children();
+        $node = $children[0];
+        $this->assertSame($tokens[0], $node->firstToken());
+        $this->assertSame($tokens[0], $node->lastToken());
+
+        $node = $children[1];
+        $this->assertSame($tokens[2], $node->firstToken());
+        $this->assertSame($tokens[6], $node->lastToken());
+
+        $node = $children[2];
+        $this->assertSame($tokens[8], $node->firstToken());
+        $this->assertSame($tokens[9], $node->lastToken());
+
+        $node = $children[2]->child();
+        $this->assertSame($tokens[9], $node->firstToken());
+        $this->assertSame($tokens[9], $node->lastToken());
+
+        $children = $children[1]->children();
+        $node = $children[0];
+        $this->assertSame($tokens[3], $node->firstToken());
+        $this->assertSame($tokens[3], $node->lastToken());
+
+        $node = $children[1];
+        $this->assertSame($tokens[5], $node->firstToken());
+        $this->assertSame($tokens[5], $node->lastToken());
+    }
+
     public function parseTestVectors()
     {
         return array(
             'empty expression' => array(
                 '',
-                new EmptyExpression,
+                new EmptyExpression(),
             ),
             'single tag' => array(
                 'a',
@@ -79,7 +114,7 @@ class ExpressionParserTest extends PHPUnit_Framework_TestCase
                 'a*',
                 new Pattern(
                     new PatternLiteral('a'),
-                    new PatternWildcard
+                    new PatternWildcard()
                 ),
             ),
             'multiple tags' => array(

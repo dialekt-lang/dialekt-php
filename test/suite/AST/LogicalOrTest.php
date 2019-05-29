@@ -6,7 +6,7 @@ use PHPUnit_Framework_TestCase;
 
 /**
  * @covers Icecave\Dialekt\AST\LogicalOr
- * @covers Icecave\Dialekt\AST\AbstractPolyadicOperator
+ * @covers Icecave\Dialekt\AST\AbstractPolyadicExpression
  */
 class LogicalOrTest extends PHPUnit_Framework_TestCase
 {

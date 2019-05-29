@@ -16,7 +16,7 @@ class ExpressionRendererTest extends PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
-        $this->renderer = new ExpressionRenderer;
+        $this->renderer = new ExpressionRenderer();
     }
 
     /**
@@ -47,7 +47,7 @@ class ExpressionRendererTest extends PHPUnit_Framework_TestCase
     {
         return array(
             'empty expression' => array(
-                new EmptyExpression,
+                new EmptyExpression(),
                 'NOT *',
             ),
             'tag' => array(
@@ -77,14 +77,14 @@ class ExpressionRendererTest extends PHPUnit_Framework_TestCase
             'pattern' => array(
                 new Pattern(
                     new PatternLiteral('foo'),
-                    new PatternWildcard
+                    new PatternWildcard()
                 ),
                 'foo*',
             ),
             'escaped pattern' => array(
                 new Pattern(
                     new PatternLiteral('foo"'),
-                    new PatternWildcard
+                    new PatternWildcard()
                 ),
                 '"foo\\"*"',
             ),

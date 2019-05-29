@@ -8,7 +8,7 @@ class EmptyExpressionTest extends PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
-        $this->expression = new EmptyExpression;
+        $this->expression = new EmptyExpression();
     }
 
     public function testAccept()

@@ -4,7 +4,7 @@ namespace Icecave\Dialekt\AST;
 /**
  * An AST node that represents a pattern-match expression.
  */
-class Pattern implements ExpressionInterface
+class Pattern extends AbstractExpression implements ExpressionInterface
 {
     /**
      * @param PatternChildInterface $child,... One or more pattern literals or placeholders.

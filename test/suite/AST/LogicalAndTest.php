@@ -6,7 +6,7 @@ use PHPUnit_Framework_TestCase;
 
 /**
  * @covers Icecave\Dialekt\AST\LogicalAnd
- * @covers Icecave\Dialekt\AST\AbstractPolyadicOperator
+ * @covers Icecave\Dialekt\AST\AbstractPolyadicExpression
  */
 class LogicalAndTest extends PHPUnit_Framework_TestCase
 {

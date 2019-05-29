@@ -5,48 +5,49 @@ use Icecave\Dialekt\AST\EmptyExpression;
 use Icecave\Dialekt\AST\LogicalAnd;
 use Icecave\Dialekt\AST\Tag;
 use Icecave\Dialekt\Parser\Exception\ParseException;
-
+use Icecave\Dialekt\Renderer\ExpressionRenderer;
 use PHPUnit_Framework_TestCase;
 
+/**
+ * @covers Icecave\Dialekt\Parser\ListParser
+ * @covers Icecave\Dialekt\Parser\AbstractParser
+ */
 class ListParserTest extends PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
-        $this->parser = new ListParser;
+        $this->renderer = new ExpressionRenderer();
+        $this->parser = new ListParser();
     }
 
-    public function testParseWithEmptyExpression()
+    /**
+     * @dataProvider parseTestVectors
+     */
+    public function testParse($expression, $expectedResult, array $expectedTags)
     {
-        $this->assertInstanceOf(
-            'Icecave\Dialekt\AST\EmptyExpression',
-            $this->parser->parse('')
-        );
-    }
+        $result = $this->parser->parse($expression);
 
-    public function testParseWithSingleTag()
-    {
         $this->assertEquals(
-            new Tag('foo'),
-            $this->parser->parse('foo')
+            $this->renderer->render($expectedResult),
+            $this->renderer->render($result)
         );
     }
 
-    public function testParseWithMultipleTags()
+    /**
+     * @dataProvider parseTestVectors
+     */
+    public function testParseAsArray($expression, $expectedResult, array $expectedTags)
     {
-        $this->assertEquals(
-            new LogicalAnd(
-                new Tag('foo'),
-                new Tag('bar spam')
-            ),
-            $this->parser->parse('foo "bar spam"')
-        );
+        $result = $this->parser->parseAsArray($expression);
+
+        $this->assertSame($expectedTags, $result);
     }
 
     public function testParseFailureWithNonString()
     {
         $this->setExpectedException(
             'Icecave\Dialekt\Parser\Exception\ParseException',
-            'Unexpected AND operator, expected tag or end of input.'
+            'Unexpected AND operator, expected tag.'
         );
 
         $this->parser->parse('and');
@@ -62,27 +63,51 @@ class ListParserTest extends PHPUnit_Framework_TestCase
         $this->parser->parse('foo*');
     }
 
-    public function testParseAsArrayWithEmptyExpression()
+    public function testTokens()
     {
-        $this->assertEquals(
-            array(),
-            $this->parser->parseAsArray('')
-        );
+        $lexer = new Lexer();
+        $tokens = $lexer->lex('a b c');
+        $result = $this->parser->parseTokens($tokens);
+
+        $this->assertSame($tokens[0], $result->firstToken());
+        $this->assertSame($tokens[2], $result->lastToken());
+
+        $children = $result->children();
+
+        $node = $children[0];
+        $this->assertSame($tokens[0], $node->firstToken());
+        $this->assertSame($tokens[0], $node->lastToken());
+
+        $node = $children[1];
+        $this->assertSame($tokens[1], $node->firstToken());
+        $this->assertSame($tokens[1], $node->lastToken());
+
+        $node = $children[2];
+        $this->assertSame($tokens[2], $node->firstToken());
+        $this->assertSame($tokens[2], $node->lastToken());
     }
 
-    public function testParseAsArrayWithSingleTag()
+    public function parseTestVectors()
     {
-        $this->assertEquals(
-            array('foo'),
-            $this->parser->parseAsArray('foo')
-        );
-    }
-
-    public function testParseAsArrayWithMultipleTags()
-    {
-        $this->assertEquals(
-            array('foo', 'bar spam'),
-            $this->parser->parseAsArray('foo "bar spam"')
+        return array(
+            'empty expression' => array(
+                '',
+                new EmptyExpression(),
+                array(),
+            ),
+            'single tag' => array(
+                'foo',
+                new Tag('foo'),
+                array('foo'),
+            ),
+            'multiple tags' => array(
+                'foo "bar spam"',
+                new LogicalAnd(
+                    new Tag('foo'),
+                    new Tag('bar spam')
+                ),
+                array('foo', 'bar spam')
+            ),
         );
     }
 }

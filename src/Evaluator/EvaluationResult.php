@@ -17,7 +17,7 @@ class EvaluationResult
     public function __construct($isMatch, array $expressionResults)
     {
         $this->isMatch = $isMatch;
-        $this->expressionResults = new SplObjectStorage;
+        $this->expressionResults = new SplObjectStorage();
 
         foreach ($expressionResults as $result) {
             $this->expressionResults[$result->expression()] = $result;
