@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
 
 class TagTest extends TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         $this->expression = new Tag('foo');
     }

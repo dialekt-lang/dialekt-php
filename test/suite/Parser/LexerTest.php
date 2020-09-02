@@ -5,7 +5,7 @@ use PHPUnit\Framework\TestCase;
 
 class LexerTest extends TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         $this->lexer = new Lexer();
     }

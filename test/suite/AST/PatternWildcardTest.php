@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
 
 class PatternWildcardTest extends TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         $this->node = new PatternWildcard();
     }

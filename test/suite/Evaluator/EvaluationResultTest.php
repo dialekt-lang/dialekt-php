@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 
 class EvaluationResultTest extends TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         $this->expression = Phake::mock('Dialekt\AST\ExpressionInterface');
 

@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
 
 class PatternTest extends TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         $this->child1 = new PatternLiteral('foo');
         $this->child2 = new PatternWildcard();

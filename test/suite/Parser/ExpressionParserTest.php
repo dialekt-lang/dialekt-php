@@ -19,7 +19,7 @@ use PHPUnit\Framework\TestCase;
  */
 class ExpressionParserTest extends TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         $this->renderer = new ExpressionRenderer();
         $this->parser = new ExpressionParser();

@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 class ExpressionRendererTest extends TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         $this->renderer = new ExpressionRenderer();
     }

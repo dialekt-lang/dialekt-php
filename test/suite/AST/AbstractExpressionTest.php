@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
 
 class AbstractExpressionTest extends TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         $this->node = Phake::partialMock('Dialekt\AST\AbstractExpression');
     }

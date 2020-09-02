@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
 
 class LogicalNotTest extends TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         $this->child = new Tag('foo');
         $this->expression = new LogicalNot($this->child);

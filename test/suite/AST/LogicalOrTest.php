@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
  */
 class LogicalOrTest extends TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         $this->child1 = new Tag('a');
         $this->child2 = new Tag('b');
