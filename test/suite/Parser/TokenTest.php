@@ -1,4 +1,5 @@
 <?php
+
 namespace Dialekt\Parser;
 
 use PHPUnit\Framework\TestCase;
@@ -41,31 +42,31 @@ class TokenTest extends TestCase
 
     public function typeDescriptionTestVectors()
     {
-        return array(
-            array(
+        return [
+            [
                 Token::LOGICAL_AND,
                 'AND operator',
-            ),
-            array(
+            ],
+            [
                 Token::LOGICAL_OR,
                 'OR operator',
-            ),
-            array(
+            ],
+            [
                 Token::LOGICAL_NOT,
                 'NOT operator',
-            ),
-            array(
+            ],
+            [
                 Token::STRING,
                 'tag',
-            ),
-            array(
+            ],
+            [
                 Token::OPEN_BRACKET,
                 'open bracket',
-            ),
-            array(
+            ],
+            [
                 Token::CLOSE_BRACKET,
                 'close bracket',
-            ),
-        );
+            ],
+        ];
     }
 }

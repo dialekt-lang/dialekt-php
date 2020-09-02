@@ -1,4 +1,5 @@
 <?php
+
 namespace Dialekt\Evaluator;
 
 use Dialekt\AST\ExpressionInterface;

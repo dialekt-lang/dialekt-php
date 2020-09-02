@@ -1,4 +1,5 @@
 <?php
+
 namespace Dialekt\Renderer;
 
 use Dialekt\AST\EmptyExpression;
@@ -45,71 +46,71 @@ class ExpressionRendererTest extends TestCase
 
     public function renderTestVectors()
     {
-        return array(
-            'empty expression' => array(
+        return [
+            'empty expression' => [
                 new EmptyExpression(),
                 'NOT *',
-            ),
-            'tag' => array(
+            ],
+            'tag' => [
                 new Tag('foo'),
                 'foo',
-            ),
-            'escaped tag' => array(
+            ],
+            'escaped tag' => [
                 new Tag('f\\o"o'),
                 '"f\\\\o\\"o"',
-            ),
-            'escaped tag - logical and' => array(
+            ],
+            'escaped tag - logical and' => [
                 new Tag('and'),
                 '"and"',
-            ),
-            'escaped tag - logical or' => array(
+            ],
+            'escaped tag - logical or' => [
                 new Tag('or'),
                 '"or"',
-            ),
-            'escaped tag - logical not' => array(
+            ],
+            'escaped tag - logical not' => [
                 new Tag('not'),
                 '"not"',
-            ),
-            'tag with spaces' => array(
+            ],
+            'tag with spaces' => [
                 new Tag('foo bar'),
                 '"foo bar"',
-            ),
-            'pattern' => array(
+            ],
+            'pattern' => [
                 new Pattern(
                     new PatternLiteral('foo'),
                     new PatternWildcard()
                 ),
                 'foo*',
-            ),
-            'escaped pattern' => array(
+            ],
+            'escaped pattern' => [
                 new Pattern(
                     new PatternLiteral('foo"'),
                     new PatternWildcard()
                 ),
                 '"foo\\"*"',
-            ),
-            'logical and' => array(
+            ],
+            'logical and' => [
                 new LogicalAnd(
                     new Tag('a'),
                     new Tag('b'),
                     new Tag('c')
                 ),
                 '(a AND b AND c)',
-            ),
-            'logical or' => array(
+            ],
+            'logical or' => [
                 new LogicalOr(
                     new Tag('a'),
                     new Tag('b'),
                     new Tag('c')
                 ),
                 '(a OR b OR c)',
-            ),
-            'logical not' => array(
+            ],
+            'logical not' => [
                 new LogicalNot(
                     new Tag('a')
                 ),
                 'NOT a',
-            ),
-        );
+            ],
+        ];
     }
 }

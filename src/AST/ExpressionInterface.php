@@ -1,4 +1,5 @@
 <?php
+
 namespace Dialekt\AST;
 
 use Dialekt\Parser\Token;

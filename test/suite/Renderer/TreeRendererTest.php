@@ -1,4 +1,5 @@
 <?php
+
 namespace Dialekt\Renderer;
 
 use Dialekt\AST\EmptyExpression;
@@ -43,36 +44,36 @@ class TreeRendererTest extends TestCase
 
     public function renderTestVectors()
     {
-        return array(
-            'empty expression' => array(
+        return [
+            'empty expression' => [
                 new EmptyExpression(),
                 'EMPTY',
-            ),
-            'tag' => array(
+            ],
+            'tag' => [
                 new Tag('foo'),
                 'TAG "foo"',
-            ),
-            'escaped tag' => array(
+            ],
+            'escaped tag' => [
                 new Tag('f\\o"o'),
                 'TAG "f\\\\o\\"o"',
-            ),
-            'escaped tag - logical and' => array(
+            ],
+            'escaped tag - logical and' => [
                 new Tag('and'),
                 'TAG "and"',
-            ),
-            'escaped tag - logical or' => array(
+            ],
+            'escaped tag - logical or' => [
                 new Tag('or'),
                 'TAG "or"',
-            ),
-            'escaped tag - logical not' => array(
+            ],
+            'escaped tag - logical not' => [
                 new Tag('not'),
                 'TAG "not"',
-            ),
-            'tag with spaces' => array(
+            ],
+            'tag with spaces' => [
                 new Tag('foo bar'),
                 'TAG "foo bar"',
-            ),
-            'pattern' => array(
+            ],
+            'pattern' => [
                 new Pattern(
                     new PatternLiteral('foo'),
                     new PatternWildcard()
@@ -80,8 +81,8 @@ class TreeRendererTest extends TestCase
                 'PATTERN' . "\r\n" .
                 '  - LITERAL "foo"' . "\r\n" .
                 '  - WILDCARD',
-            ),
-            'escaped pattern' => array(
+            ],
+            'escaped pattern' => [
                 new Pattern(
                     new PatternLiteral('foo"'),
                     new PatternWildcard()
@@ -89,8 +90,8 @@ class TreeRendererTest extends TestCase
                 'PATTERN' . "\r\n" .
                 '  - LITERAL "foo\\""' . "\r\n" .
                 '  - WILDCARD',
-            ),
-            'logical and' => array(
+            ],
+            'logical and' => [
                 new LogicalAnd(
                     new Tag('a'),
                     new Tag('b'),
@@ -100,8 +101,8 @@ class TreeRendererTest extends TestCase
                 '  - TAG "a"' . "\r\n" .
                 '  - TAG "b"' . "\r\n" .
                 '  - TAG "c"',
-            ),
-            'logical or' => array(
+            ],
+            'logical or' => [
                 new LogicalOr(
                     new Tag('a'),
                     new Tag('b'),
@@ -111,14 +112,14 @@ class TreeRendererTest extends TestCase
                 '  - TAG "a"' . "\r\n" .
                 '  - TAG "b"' . "\r\n" .
                 '  - TAG "c"',
-            ),
-            'logical not' => array(
+            ],
+            'logical not' => [
                 new LogicalNot(
                     new Tag('a')
                 ),
                 'NOT' . "\r\n" .
                 '  - TAG "a"',
-            ),
-        );
+            ],
+        ];
     }
 }

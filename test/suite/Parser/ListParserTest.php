@@ -1,10 +1,10 @@
 <?php
+
 namespace Dialekt\Parser;
 
 use Dialekt\AST\EmptyExpression;
 use Dialekt\AST\LogicalAnd;
 use Dialekt\AST\Tag;
-use Dialekt\Parser\Exception\ParseException;
 use Dialekt\Renderer\ExpressionRenderer;
 use PHPUnit\Framework\TestCase;
 
@@ -89,25 +89,25 @@ class ListParserTest extends TestCase
 
     public function parseTestVectors()
     {
-        return array(
-            'empty expression' => array(
+        return [
+            'empty expression' => [
                 '',
                 new EmptyExpression(),
-                array(),
-            ),
-            'single tag' => array(
+                [],
+            ],
+            'single tag' => [
                 'foo',
                 new Tag('foo'),
-                array('foo'),
-            ),
-            'multiple tags' => array(
+                ['foo'],
+            ],
+            'multiple tags' => [
                 'foo "bar spam"',
                 new LogicalAnd(
                     new Tag('foo'),
                     new Tag('bar spam')
                 ),
-                array('foo', 'bar spam')
-            ),
-        );
+                ['foo', 'bar spam'],
+            ],
+        ];
     }
 }

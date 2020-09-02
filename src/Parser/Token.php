@@ -1,4 +1,5 @@
 <?php
+
 namespace Dialekt\Parser;
 
 use LogicException;
@@ -45,7 +46,7 @@ class Token
                 return 'open bracket';
             case self::CLOSE_BRACKET:
                 return 'close bracket';
-        };
+        }
 
         throw new LogicException('Unknown type.');
     }

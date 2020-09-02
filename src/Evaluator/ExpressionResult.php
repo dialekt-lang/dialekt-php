@@ -1,4 +1,5 @@
 <?php
+
 namespace Dialekt\Evaluator;
 
 use Dialekt\AST\ExpressionInterface;
@@ -10,7 +11,7 @@ class ExpressionResult
 {
     /**
      * @param ExpressionInterface $expression    The expression to which this result applies.
-     * @param boolean             $isMatch       True if the expression matched the tag set; otherwise, false.
+     * @param bool                $isMatch       True if the expression matched the tag set; otherwise, false.
      * @param array<string>       $matchedTags   The set of tags that matched.
      * @param array<string>       $unmatchedTags The set of tags that did not match.
      */
@@ -39,7 +40,7 @@ class ExpressionResult
     /**
      * Indicates whether or not the expression matched the tag set.
      *
-     * @return boolean True if the expression matched the tag set; otherwise, false.
+     * @return bool True if the expression matched the tag set; otherwise, false.
      */
     public function isMatch()
     {

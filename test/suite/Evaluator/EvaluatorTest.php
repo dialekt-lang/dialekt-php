@@ -1,4 +1,5 @@
 <?php
+
 namespace Dialekt\Evaluator;
 
 use Dialekt\AST\EmptyExpression;
@@ -45,14 +46,14 @@ class EvaluatorTest extends TestCase
         $this->assertTrue(
             $this->evaluator->evaluate(
                 $expression,
-                array('foo')
+                ['foo']
             )->isMatch()
         );
 
         $this->assertFalse(
             $this->evaluator->evaluate(
                 $expression,
-                array('FOO')
+                ['FOO']
             )->isMatch()
         );
     }
@@ -68,14 +69,14 @@ class EvaluatorTest extends TestCase
         $this->assertTrue(
             $this->evaluator->evaluate(
                 $expression,
-                array('foobar')
+                ['foobar']
             )->isMatch()
         );
 
         $this->assertFalse(
             $this->evaluator->evaluate(
                 $expression,
-                array('FOOBAR')
+                ['FOOBAR']
             )->isMatch()
         );
     }
@@ -87,7 +88,7 @@ class EvaluatorTest extends TestCase
         $this->assertTrue(
             $this->evaluator->evaluate(
                 new EmptyExpression(),
-                array('foo')
+                ['foo']
             )->isMatch()
         );
     }
@@ -105,7 +106,7 @@ class EvaluatorTest extends TestCase
 
         $result = $this->evaluator->evaluate(
             $expression,
-            array('foo', 'bar', 'spam')
+            ['foo', 'bar', 'spam']
         );
 
         $this->assertInstanceOf('Dialekt\Evaluator\EvaluationResult', $result);
@@ -114,26 +115,26 @@ class EvaluatorTest extends TestCase
         $expressionResult = $result->resultOf($expression);
         $this->assertInstanceOf('Dialekt\Evaluator\ExpressionResult', $expressionResult);
         $this->assertTrue($expressionResult->isMatch());
-        $this->assertEquals(array('foo', 'bar'), $expressionResult->matchedTags());
-        $this->assertEquals(array('spam'), $expressionResult->unmatchedTags());
+        $this->assertEquals(['foo', 'bar'], $expressionResult->matchedTags());
+        $this->assertEquals(['spam'], $expressionResult->unmatchedTags());
 
         $expressionResult = $result->resultOf($innerExpression1);
         $this->assertInstanceOf('Dialekt\Evaluator\ExpressionResult', $expressionResult);
         $this->assertTrue($expressionResult->isMatch());
-        $this->assertEquals(array('foo'), $expressionResult->matchedTags());
-        $this->assertEquals(array('bar', 'spam'), $expressionResult->unmatchedTags());
+        $this->assertEquals(['foo'], $expressionResult->matchedTags());
+        $this->assertEquals(['bar', 'spam'], $expressionResult->unmatchedTags());
 
         $expressionResult = $result->resultOf($innerExpression2);
         $this->assertInstanceOf('Dialekt\Evaluator\ExpressionResult', $expressionResult);
         $this->assertTrue($expressionResult->isMatch());
-        $this->assertEquals(array('bar'), $expressionResult->matchedTags());
-        $this->assertEquals(array('foo', 'spam'), $expressionResult->unmatchedTags());
+        $this->assertEquals(['bar'], $expressionResult->matchedTags());
+        $this->assertEquals(['foo', 'spam'], $expressionResult->unmatchedTags());
 
         $expressionResult = $result->resultOf($innerExpression3);
         $this->assertInstanceOf('Dialekt\Evaluator\ExpressionResult', $expressionResult);
         $this->assertTrue($expressionResult->isMatch());
-        $this->assertEquals(array('bar'), $expressionResult->matchedTags());
-        $this->assertEquals(array('foo', 'spam'), $expressionResult->unmatchedTags());
+        $this->assertEquals(['bar'], $expressionResult->matchedTags());
+        $this->assertEquals(['foo', 'spam'], $expressionResult->unmatchedTags());
     }
 
     public function testEvaluateLogicalOr()
@@ -149,7 +150,7 @@ class EvaluatorTest extends TestCase
 
         $result = $this->evaluator->evaluate(
             $expression,
-            array('foo', 'bar', 'spam')
+            ['foo', 'bar', 'spam']
         );
 
         $this->assertInstanceOf('Dialekt\Evaluator\EvaluationResult', $result);
@@ -158,26 +159,26 @@ class EvaluatorTest extends TestCase
         $expressionResult = $result->resultOf($expression);
         $this->assertInstanceOf('Dialekt\Evaluator\ExpressionResult', $expressionResult);
         $this->assertTrue($expressionResult->isMatch());
-        $this->assertEquals(array('foo', 'bar'), $expressionResult->matchedTags());
-        $this->assertEquals(array('spam'), $expressionResult->unmatchedTags());
+        $this->assertEquals(['foo', 'bar'], $expressionResult->matchedTags());
+        $this->assertEquals(['spam'], $expressionResult->unmatchedTags());
 
         $expressionResult = $result->resultOf($innerExpression1);
         $this->assertInstanceOf('Dialekt\Evaluator\ExpressionResult', $expressionResult);
         $this->assertTrue($expressionResult->isMatch());
-        $this->assertEquals(array('foo'), $expressionResult->matchedTags());
-        $this->assertEquals(array('bar', 'spam'), $expressionResult->unmatchedTags());
+        $this->assertEquals(['foo'], $expressionResult->matchedTags());
+        $this->assertEquals(['bar', 'spam'], $expressionResult->unmatchedTags());
 
         $expressionResult = $result->resultOf($innerExpression2);
         $this->assertInstanceOf('Dialekt\Evaluator\ExpressionResult', $expressionResult);
         $this->assertTrue($expressionResult->isMatch());
-        $this->assertEquals(array('bar'), $expressionResult->matchedTags());
-        $this->assertEquals(array('foo', 'spam'), $expressionResult->unmatchedTags());
+        $this->assertEquals(['bar'], $expressionResult->matchedTags());
+        $this->assertEquals(['foo', 'spam'], $expressionResult->unmatchedTags());
 
         $expressionResult = $result->resultOf($innerExpression3);
         $this->assertInstanceOf('Dialekt\Evaluator\ExpressionResult', $expressionResult);
         $this->assertFalse($expressionResult->isMatch());
-        $this->assertEquals(array(), $expressionResult->matchedTags());
-        $this->assertEquals(array('foo', 'bar', 'spam'), $expressionResult->unmatchedTags());
+        $this->assertEquals([], $expressionResult->matchedTags());
+        $this->assertEquals(['foo', 'bar', 'spam'], $expressionResult->unmatchedTags());
     }
 
     public function testEvaluateLogicalNot()
@@ -187,7 +188,7 @@ class EvaluatorTest extends TestCase
 
         $result = $this->evaluator->evaluate(
             $expression,
-            array('foo', 'bar')
+            ['foo', 'bar']
         );
 
         $this->assertInstanceOf('Dialekt\Evaluator\EvaluationResult', $result);
@@ -196,14 +197,14 @@ class EvaluatorTest extends TestCase
         $expressionResult = $result->resultOf($expression);
         $this->assertInstanceOf('Dialekt\Evaluator\ExpressionResult', $expressionResult);
         $this->assertFalse($expressionResult->isMatch());
-        $this->assertEquals(array('bar'), $expressionResult->matchedTags());
-        $this->assertEquals(array('foo'), $expressionResult->unmatchedTags());
+        $this->assertEquals(['bar'], $expressionResult->matchedTags());
+        $this->assertEquals(['foo'], $expressionResult->unmatchedTags());
 
         $expressionResult = $result->resultOf($innerExpression);
         $this->assertInstanceOf('Dialekt\Evaluator\ExpressionResult', $expressionResult);
         $this->assertTrue($expressionResult->isMatch());
-        $this->assertEquals(array('foo'), $expressionResult->matchedTags());
-        $this->assertEquals(array('bar'), $expressionResult->unmatchedTags());
+        $this->assertEquals(['foo'], $expressionResult->matchedTags());
+        $this->assertEquals(['bar'], $expressionResult->unmatchedTags());
     }
 
     public function testEvaluateTag()
@@ -212,7 +213,7 @@ class EvaluatorTest extends TestCase
 
         $result = $this->evaluator->evaluate(
             $expression,
-            array('foo', 'bar')
+            ['foo', 'bar']
         );
 
         $this->assertInstanceOf('Dialekt\Evaluator\EvaluationResult', $result);
@@ -221,8 +222,8 @@ class EvaluatorTest extends TestCase
         $expressionResult = $result->resultOf($expression);
         $this->assertInstanceOf('Dialekt\Evaluator\ExpressionResult', $expressionResult);
         $this->assertTrue($expressionResult->isMatch());
-        $this->assertEquals(array('foo'), $expressionResult->matchedTags());
-        $this->assertEquals(array('bar'), $expressionResult->unmatchedTags());
+        $this->assertEquals(['foo'], $expressionResult->matchedTags());
+        $this->assertEquals(['bar'], $expressionResult->unmatchedTags());
     }
 
     public function testEvaluatePattern()
@@ -234,7 +235,7 @@ class EvaluatorTest extends TestCase
 
         $result = $this->evaluator->evaluate(
             $expression,
-            array('foo1', 'foo2', 'bar')
+            ['foo1', 'foo2', 'bar']
         );
 
         $this->assertInstanceOf('Dialekt\Evaluator\EvaluationResult', $result);
@@ -243,8 +244,8 @@ class EvaluatorTest extends TestCase
         $expressionResult = $result->resultOf($expression);
         $this->assertInstanceOf('Dialekt\Evaluator\ExpressionResult', $expressionResult);
         $this->assertTrue($expressionResult->isMatch());
-        $this->assertEquals(array('foo1', 'foo2'), $expressionResult->matchedTags());
-        $this->assertEquals(array('bar'), $expressionResult->unmatchedTags());
+        $this->assertEquals(['foo1', 'foo2'], $expressionResult->matchedTags());
+        $this->assertEquals(['bar'], $expressionResult->unmatchedTags());
     }
 
     public function testEvaluateEmptyExpression()
@@ -253,7 +254,7 @@ class EvaluatorTest extends TestCase
 
         $result = $this->evaluator->evaluate(
             $expression,
-            array('foo', 'bar')
+            ['foo', 'bar']
         );
 
         $this->assertInstanceOf('Dialekt\Evaluator\EvaluationResult', $result);
@@ -262,181 +263,181 @@ class EvaluatorTest extends TestCase
         $expressionResult = $result->resultOf($expression);
         $this->assertInstanceOf('Dialekt\Evaluator\ExpressionResult', $expressionResult);
         $this->assertFalse($expressionResult->isMatch());
-        $this->assertEquals(array(), $expressionResult->matchedTags());
-        $this->assertEquals(array('foo', 'bar'), $expressionResult->unmatchedTags());
+        $this->assertEquals([], $expressionResult->matchedTags());
+        $this->assertEquals(['foo', 'bar'], $expressionResult->unmatchedTags());
     }
 
     public function evaluateTestVectors()
     {
-        return array(
-            array(
+        return [
+            [
                 new EmptyExpression(),
-                array('foo'),
+                ['foo'],
                 false,
-            ),
-            array(
+            ],
+            [
                 new Tag('foo'),
-                array('foo'),
+                ['foo'],
                 true,
-            ),
-            array(
+            ],
+            [
                 new Tag('foo'),
-                array('bar'),
+                ['bar'],
                 false,
-            ),
-            array(
+            ],
+            [
                 new Tag('foo'),
-                array('foo', 'bar'),
+                ['foo', 'bar'],
                 true,
-            ),
-            array(
+            ],
+            [
                 new Pattern(
                     new PatternLiteral('foo'),
                     new PatternWildcard()
                 ),
-                array('foobar'),
+                ['foobar'],
                 true,
-            ),
-            array(
+            ],
+            [
                 new LogicalAnd(
                     new Tag('foo'),
                     new Tag('bar')
                 ),
-                array('foo'),
+                ['foo'],
                 false,
-            ),
-            array(
+            ],
+            [
                 new LogicalAnd(
                     new Tag('foo'),
                     new Tag('bar')
                 ),
-                array('bar'),
+                ['bar'],
                 false,
-            ),
-            array(
+            ],
+            [
                 new LogicalAnd(
                     new Tag('foo'),
                     new Tag('bar')
                 ),
-                array('foo', 'bar'),
+                ['foo', 'bar'],
                 true,
-            ),
-            array(
+            ],
+            [
                 new LogicalAnd(
                     new Tag('foo'),
                     new Tag('bar')
                 ),
-                array('foo', 'bar', 'spam'),
+                ['foo', 'bar', 'spam'],
                 true,
-            ),
-            array(
+            ],
+            [
                 new LogicalAnd(
                     new Tag('foo'),
                     new Tag('bar')
                 ),
-                array('foo', 'spam'),
+                ['foo', 'spam'],
                 false,
-            ),
-            array(
+            ],
+            [
                 new LogicalOr(
                     new Tag('foo'),
                     new Tag('bar')
                 ),
-                array('foo'),
+                ['foo'],
                 true,
-            ),
-            array(
+            ],
+            [
                 new LogicalOr(
                     new Tag('foo'),
                     new Tag('bar')
                 ),
-                array('bar'),
+                ['bar'],
                 true,
-            ),
-            array(
+            ],
+            [
                 new LogicalOr(
                     new Tag('foo'),
                     new Tag('bar')
                 ),
-                array('foo', 'spam'),
+                ['foo', 'spam'],
                 true,
-            ),
-            array(
+            ],
+            [
                 new LogicalOr(
                     new Tag('foo'),
                     new Tag('bar')
                 ),
-                array('spam'),
+                ['spam'],
                 false,
-            ),
-            array(
+            ],
+            [
                 new LogicalNot(
                     new Tag('foo')
                 ),
-                array('foo'),
+                ['foo'],
                 false,
-            ),
-            array(
+            ],
+            [
                 new LogicalNot(
                     new Tag('foo')
                 ),
-                array('foo', 'bar'),
+                ['foo', 'bar'],
                 false,
-            ),
-            array(
+            ],
+            [
                 new LogicalNot(
                     new Tag('foo')
                 ),
-                array('bar'),
+                ['bar'],
                 true,
-            ),
-            array(
+            ],
+            [
                 new LogicalNot(
                     new Tag('foo')
                 ),
-                array('bar', 'spam'),
+                ['bar', 'spam'],
                 true,
-            ),
-            array(
+            ],
+            [
                 new LogicalAnd(
                     new Tag('foo'),
                     new LogicalNot(
                         new Tag('bar')
                     )
                 ),
-                array('foo'),
+                ['foo'],
                 true,
-            ),
-            array(
+            ],
+            [
                 new LogicalAnd(
                     new Tag('foo'),
                     new LogicalNot(
                         new Tag('bar')
                     )
                 ),
-                array('foo', 'spam'),
+                ['foo', 'spam'],
                 true,
-            ),
-            array(
+            ],
+            [
                 new LogicalAnd(
                     new Tag('foo'),
                     new LogicalNot(
                         new Tag('bar')
                     )
                 ),
-                array('foo', 'bar', 'spam'),
+                ['foo', 'bar', 'spam'],
                 false,
-            ),
-            array(
+            ],
+            [
                 new LogicalAnd(
                     new Tag('foo'),
                     new LogicalNot(
                         new Tag('bar')
                     )
                 ),
-                array('spam'),
+                ['spam'],
                 false,
-            ),
-        );
+            ],
+        ];
     }
 }

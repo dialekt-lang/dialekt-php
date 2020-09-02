@@ -1,4 +1,5 @@
 <?php
+
 namespace Dialekt\Evaluator;
 
 use Dialekt\AST\ExpressionInterface;
@@ -11,7 +12,7 @@ use UnexpectedValueException;
 class EvaluationResult
 {
     /**
-     * @param boolean                 $isMatch           True if the expression matched the tag set; otherwise, false.
+     * @param bool                    $isMatch           True if the expression matched the tag set; otherwise, false.
      * @param array<ExpressionResult> $expressionResults The individual sub-expression results.
      */
     public function __construct($isMatch, array $expressionResults)
@@ -27,7 +28,7 @@ class EvaluationResult
     /**
      * Indicates whether or not the expression matched the tag set.
      *
-     * @return boolean True if the expression matched the tag set; otherwise, false.
+     * @return bool True if the expression matched the tag set; otherwise, false.
      */
     public function isMatch()
     {

@@ -1,7 +1,7 @@
 <?php
+
 namespace Dialekt\Evaluator;
 
-use Dialekt\AST\ExpressionInterface;
 use Phake;
 use PHPUnit\Framework\TestCase;
 
@@ -14,8 +14,8 @@ class ExpressionResultTest extends TestCase
         $this->result = new ExpressionResult(
             $this->expression,
             true,
-            array('foo'),
-            array('bar')
+            ['foo'],
+            ['bar']
         );
     }
 
@@ -32,7 +32,7 @@ class ExpressionResultTest extends TestCase
     public function testMatchedTags()
     {
         $this->assertEquals(
-            array('foo'),
+            ['foo'],
             $this->result->matchedTags()
         );
     }
@@ -40,7 +40,7 @@ class ExpressionResultTest extends TestCase
     public function testUnmatchedTags()
     {
         $this->assertEquals(
-            array('bar'),
+            ['bar'],
             $this->result->unmatchedTags()
         );
     }

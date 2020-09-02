@@ -1,10 +1,9 @@
 <?php
+
 namespace Dialekt\Parser;
 
 use Dialekt\AST\ExpressionInterface;
-use Dialekt\AST\LogicalAnd;
 use Dialekt\AST\LogicalNot;
-use Dialekt\AST\LogicalOr;
 use Dialekt\AST\Pattern;
 use Dialekt\AST\PatternLiteral;
 use Dialekt\AST\PatternWildcard;
@@ -23,7 +22,7 @@ class ExpressionParser extends AbstractParser
      * Indicates whether or not the the default operator should be OR, rather
      * than AND.
      *
-     * @return boolean True if the default operator should be OR, rather than AND.
+     * @return bool True if the default operator should be OR, rather than AND.
      */
     public function logicalOrByDefault()
     {
@@ -34,7 +33,7 @@ class ExpressionParser extends AbstractParser
      * Set whether or not the the default operator should be OR, rather than
      * AND.
      *
-     * @param boolean $logicalOrByDefault True if the default operator should be OR, rather than AND.
+     * @param bool $logicalOrByDefault True if the default operator should be OR, rather than AND.
      */
     public function setLogicalOrByDefault($logicalOrByDefault)
     {
@@ -204,42 +203,42 @@ class ExpressionParser extends AbstractParser
     {
         // End of input ...
         if (!$this->currentToken) {
-            return array(null, false);
+            return [null, false];
 
         // Closing bracket ...
         } elseif (Token::CLOSE_BRACKET === $this->currentToken->type) {
-            return array(null, false);
+            return [null, false];
 
         // Explicit logical OR ...
         } elseif (Token::LOGICAL_OR === $this->currentToken->type) {
-            return array(Token::LOGICAL_OR, true);
+            return [Token::LOGICAL_OR, true];
 
         // Explicit logical AND ...
         } elseif (Token::LOGICAL_AND === $this->currentToken->type) {
-            return array(Token::LOGICAL_AND, true);
+            return [Token::LOGICAL_AND, true];
 
         // Implicit logical OR ...
         } elseif ($this->logicalOrByDefault()) {
-            return array(Token::LOGICAL_OR, false);
+            return [Token::LOGICAL_OR, false];
 
         // Implicit logical AND ...
         } else {
-            return array(Token::LOGICAL_AND, false);
+            return [Token::LOGICAL_AND, false];
         }
 
-        return array(null, false);
+        return [null, false];
     }
 
-    private static $operatorClasses = array(
+    private static $operatorClasses = [
         Token::LOGICAL_AND => 'Dialekt\AST\LogicalAnd',
         Token::LOGICAL_OR  => 'Dialekt\AST\LogicalOr',
-    );
+    ];
 
-    private static $operatorPrecedence = array(
+    private static $operatorPrecedence = [
         Token::LOGICAL_AND => 1,
         Token::LOGICAL_OR  => 0,
         null               => -1,
-    );
+    ];
 
     private $logicalOrByDefault;
 }

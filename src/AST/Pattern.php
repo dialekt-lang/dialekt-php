@@ -1,4 +1,5 @@
 <?php
+
 namespace Dialekt\AST;
 
 /**
@@ -11,7 +12,7 @@ class Pattern extends AbstractExpression implements ExpressionInterface
      */
     public function __construct()
     {
-        $this->children = array();
+        $this->children = [];
 
         foreach (func_get_args() as $child) {
             $this->add($child);

@@ -1,7 +1,7 @@
 <?php
+
 namespace Dialekt\Evaluator;
 
-use Dialekt\AST\ExpressionInterface;
 use Phake;
 use PHPUnit\Framework\TestCase;
 
@@ -14,13 +14,13 @@ class EvaluationResultTest extends TestCase
         $this->expressionResult = new ExpressionResult(
             $this->expression,
             true,
-            array(),
-            array()
+            [],
+            []
         );
 
         $this->result = new EvaluationResult(
             true,
-            array($this->expressionResult)
+            [$this->expressionResult]
         );
     }
 

@@ -1,4 +1,5 @@
 <?php
+
 namespace Dialekt\AST;
 
 use Phake;
@@ -23,7 +24,7 @@ class LogicalAndTest extends TestCase
         $this->expression->add($this->child3);
 
         $this->assertSame(
-            array($this->child1, $this->child2, $this->child3),
+            [$this->child1, $this->child2, $this->child3],
             $this->expression->children()
         );
     }
@@ -31,7 +32,7 @@ class LogicalAndTest extends TestCase
     public function testChildren()
     {
         $this->assertSame(
-            array($this->child1, $this->child2),
+            [$this->child1, $this->child2],
             $this->expression->children()
         );
     }

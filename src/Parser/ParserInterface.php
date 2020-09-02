@@ -1,4 +1,5 @@
 <?php
+
 namespace Dialekt\Parser;
 
 use Dialekt\AST\ExpressionInterface;

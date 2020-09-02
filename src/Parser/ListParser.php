@@ -1,4 +1,5 @@
 <?php
+
 namespace Dialekt\Parser;
 
 use Dialekt\AST\EmptyExpression;
@@ -68,12 +69,12 @@ class ListParser extends AbstractParser
         $result = $this->parse($expression);
 
         if ($result instanceof EmptyExpression) {
-            return array();
+            return [];
         } elseif ($result instanceof Tag) {
-            return array($result->name());
+            return [$result->name()];
         }
 
-        $tags = array();
+        $tags = [];
 
         foreach ($result->children() as $node) {
             $tags[] = $node->name();

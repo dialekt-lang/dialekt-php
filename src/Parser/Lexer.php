@@ -1,4 +1,5 @@
 <?php
+
 namespace Dialekt\Parser;
 
 use Dialekt\Parser\Exception\ParseException;
@@ -19,7 +20,7 @@ class Lexer implements LexerInterface
         $this->currentLine = 1;
         $this->currentColumn = 0;
         $this->state = self::STATE_BEGIN;
-        $this->tokens = array();
+        $this->tokens = [];
         $this->buffer = '';
 
         $length = strlen($expression);
@@ -27,13 +28,13 @@ class Lexer implements LexerInterface
 
         while ($this->currentOffset < $length) {
             $char = $expression[$this->currentOffset];
-            $this->currentColumn++;
+            ++$this->currentColumn;
 
             if (
                 "\n" === $previousChar ||
                 ("\r" === $previousChar && "\n" !== $char)
             ) {
-                $this->currentLine++;
+                ++$this->currentLine;
                 $this->currentColumn = 1;
             }
 
@@ -47,7 +48,7 @@ class Lexer implements LexerInterface
                 $this->handleBeginState($char);
             }
 
-            $this->currentOffset++;
+            ++$this->currentOffset;
             $previousChar = $char;
         }
 

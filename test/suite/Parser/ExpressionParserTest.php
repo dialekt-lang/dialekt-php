@@ -1,4 +1,5 @@
 <?php
+
 namespace Dialekt\Parser;
 
 use Dialekt\AST\EmptyExpression;
@@ -101,31 +102,31 @@ class ExpressionParserTest extends TestCase
 
     public function parseTestVectors()
     {
-        return array(
-            'empty expression' => array(
+        return [
+            'empty expression' => [
                 '',
                 new EmptyExpression(),
-            ),
-            'single tag' => array(
+            ],
+            'single tag' => [
                 'a',
                 new Tag('a'),
-            ),
-            'tag pattern' => array(
+            ],
+            'tag pattern' => [
                 'a*',
                 new Pattern(
                     new PatternLiteral('a'),
                     new PatternWildcard()
                 ),
-            ),
-            'multiple tags' => array(
+            ],
+            'multiple tags' => [
                 'a b c',
                 new LogicalAnd(
                     new Tag('a'),
                     new Tag('b'),
                     new Tag('c')
                 ),
-            ),
-            'multiple tags with nesting' => array(
+            ],
+            'multiple tags with nesting' => [
                 'a (b c)',
                 new LogicalAnd(
                     new Tag('a'),
@@ -134,8 +135,8 @@ class ExpressionParserTest extends TestCase
                         new Tag('c')
                     )
                 ),
-            ),
-            'multiple nested groups remain nested' => array(
+            ],
+            'multiple nested groups remain nested' => [
                 '(a b) (c d)',
                 new LogicalAnd(
                     new LogicalAnd(
@@ -146,53 +147,53 @@ class ExpressionParserTest extends TestCase
                         new Tag('c'),
                         new Tag('d')
                     )
-                )
-            ),
-            'logical and' => array(
+                ),
+            ],
+            'logical and' => [
                 'a AND b',
                 new LogicalAnd(
                     new Tag('a'),
                     new Tag('b')
                 ),
-            ),
-            'logical and chained' => array(
+            ],
+            'logical and chained' => [
                 'a AND b AND c',
                 new LogicalAnd(
                     new Tag('a'),
                     new Tag('b'),
                     new Tag('c')
                 ),
-            ),
-            'logical or' => array(
+            ],
+            'logical or' => [
                 'a OR b',
                 new LogicalOr(
                     new Tag('a'),
                     new Tag('b')
                 ),
-            ),
-            'logical or chained' => array(
+            ],
+            'logical or chained' => [
                 'a OR b OR c',
                 new LogicalOr(
                     new Tag('a'),
                     new Tag('b'),
                     new Tag('c')
                 ),
-            ),
-            'logical not' => array(
+            ],
+            'logical not' => [
                 'NOT a',
                 new LogicalNot(
                     new Tag('a')
                 ),
-            ),
-            'logical not chained' => array(
+            ],
+            'logical not chained' => [
                 'NOT NOT a',
                 new LogicalNot(
                     new LogicalNot(
                         new Tag('a')
                     )
                 ),
-            ),
-            'logical operator implicit precedence 1' => array(
+            ],
+            'logical operator implicit precedence 1' => [
                 'a OR b AND c',
                 new LogicalOr(
                     new Tag('a'),
@@ -201,8 +202,8 @@ class ExpressionParserTest extends TestCase
                         new Tag('c')
                     )
                 ),
-            ),
-            'logical operator implicit precedence 2' => array(
+            ],
+            'logical operator implicit precedence 2' => [
                 'a AND b OR c',
                 new LogicalOr(
                     new LogicalAnd(
@@ -211,8 +212,8 @@ class ExpressionParserTest extends TestCase
                     ),
                     new Tag('c')
                 ),
-            ),
-            'logical operator explicit precedence 1' => array(
+            ],
+            'logical operator explicit precedence 1' => [
                 '(a OR b) AND c',
                 new LogicalAnd(
                     new LogicalOr(
@@ -221,8 +222,8 @@ class ExpressionParserTest extends TestCase
                     ),
                     new Tag('c')
                 ),
-            ),
-            'logical operator explicit precedence 2' => array(
+            ],
+            'logical operator explicit precedence 2' => [
                 'a AND (b OR c)',
                 new LogicalAnd(
                     new Tag('a'),
@@ -231,26 +232,26 @@ class ExpressionParserTest extends TestCase
                         new Tag('c')
                     )
                 ),
-            ),
-            'logical not implicit precedence' => array(
+            ],
+            'logical not implicit precedence' => [
                 'NOT a AND b',
                 new LogicalAnd(
                     new LogicalNot(
                         new Tag('a')
                     ),
                     new Tag('b')
-                )
-            ),
-            'logical not explicit precedence' => array(
+                ),
+            ],
+            'logical not explicit precedence' => [
                 'NOT (a AND b)',
                 new LogicalNot(
                     new LogicalAnd(
                         new Tag('a'),
                         new Tag('b')
                     )
-                )
-            ),
-            'complex nested' => array(
+                ),
+            ],
+            'complex nested' => [
                 'a ((b OR c) AND (d OR e)) f',
                 new LogicalAnd(
                     new Tag('a'),
@@ -265,38 +266,38 @@ class ExpressionParserTest extends TestCase
                         )
                     ),
                     new Tag('f')
-                )
-            ),
-        );
+                ),
+            ],
+        ];
     }
 
     public function parseFailureTestVectors()
     {
-        return array(
-            'leading logical and' => array(
+        return [
+            'leading logical and' => [
                 'AND a',
                 'Unexpected AND operator, expected tag, NOT operator or open bracket.',
-            ),
-            'leading logical or' => array(
+            ],
+            'leading logical or' => [
                 'OR a',
                 'Unexpected OR operator, expected tag, NOT operator or open bracket.',
-            ),
-            'trailing logical and' => array(
+            ],
+            'trailing logical and' => [
                 'a AND',
                 'Unexpected end of input, expected tag, NOT operator or open bracket.',
-            ),
-            'trailing logical or' => array(
+            ],
+            'trailing logical or' => [
                 'a OR',
                 'Unexpected end of input, expected tag, NOT operator or open bracket.',
-            ),
-            'mismatched braces 1' => array(
+            ],
+            'mismatched braces 1' => [
                 '(a',
-                'Unexpected end of input, expected close bracket.'
-            ),
-            'mismatched braces 2' => array(
+                'Unexpected end of input, expected close bracket.',
+            ],
+            'mismatched braces 2' => [
                 'a)',
-                'Unexpected close bracket, expected end of input.'
-            )
-        );
+                'Unexpected close bracket, expected end of input.',
+            ],
+        ];
     }
 }

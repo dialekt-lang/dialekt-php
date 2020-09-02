@@ -1,4 +1,5 @@
 <?php
+
 namespace Dialekt\Renderer;
 
 use Dialekt\AST\EmptyExpression;
@@ -11,7 +12,6 @@ use Dialekt\AST\PatternLiteral;
 use Dialekt\AST\PatternWildcard;
 use Dialekt\AST\Tag;
 use Dialekt\AST\VisitorInterface;
-use Dialekt\Parser\Parser;
 use Dialekt\Parser\Token;
 use Dialekt\Renderer\Exception\RenderException;
 
@@ -55,7 +55,7 @@ class ExpressionRenderer implements RendererInterface, VisitorInterface
      */
     public function visitLogicalAnd(LogicalAnd $node)
     {
-        $expressions = array();
+        $expressions = [];
 
         foreach ($node->children() as $n) {
             $expressions[] = $n->accept($this);
@@ -75,7 +75,7 @@ class ExpressionRenderer implements RendererInterface, VisitorInterface
      */
     public function visitLogicalOr(LogicalOr $node)
     {
-        $expressions = array();
+        $expressions = [];
 
         foreach ($node->children() as $n) {
             $expressions[] = $n->accept($this);

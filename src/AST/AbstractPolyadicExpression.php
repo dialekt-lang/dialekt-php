@@ -1,4 +1,5 @@
 <?php
+
 namespace Dialekt\AST;
 
 /**
@@ -11,7 +12,7 @@ abstract class AbstractPolyadicExpression extends AbstractExpression
      */
     public function __construct()
     {
-        $this->children = array();
+        $this->children = [];
 
         foreach (func_get_args() as $child) {
             $this->add($child);

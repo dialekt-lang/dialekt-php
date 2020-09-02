@@ -1,4 +1,5 @@
 <?php
+
 namespace Dialekt\Evaluator;
 
 use Dialekt\AST\EmptyExpression;
@@ -15,8 +16,8 @@ use Dialekt\AST\VisitorInterface;
 class Evaluator implements EvaluatorInterface, VisitorInterface
 {
     /**
-     * @param boolean $caseSensitive   True if tag matching should be case-sensitive; otherwise, false.
-     * @param boolean $emptyIsWildcard True if an empty expression matches all tags; or false to match none.
+     * @param bool $caseSensitive   True if tag matching should be case-sensitive; otherwise, false.
+     * @param bool $emptyIsWildcard True if an empty expression matches all tags; or false to match none.
      */
     public function __construct($caseSensitive = false, $emptyIsWildcard = false)
     {
@@ -35,7 +36,7 @@ class Evaluator implements EvaluatorInterface, VisitorInterface
     public function evaluate(ExpressionInterface $expression, $tags)
     {
         $this->tags = $tags;
-        $this->expressionResults = array();
+        $this->expressionResults = [];
 
         $result = new EvaluationResult(
             $expression->accept($this)->isMatch(),
@@ -59,7 +60,7 @@ class Evaluator implements EvaluatorInterface, VisitorInterface
      */
     public function visitLogicalAnd(LogicalAnd $node)
     {
-        $matchedTags = array();
+        $matchedTags = [];
         $isMatch = true;
 
         foreach ($node->children() as $n) {
@@ -97,7 +98,7 @@ class Evaluator implements EvaluatorInterface, VisitorInterface
      */
     public function visitLogicalOr(LogicalOr $node)
     {
-        $matchedTags = array();
+        $matchedTags = [];
         $isMatch = false;
 
         foreach ($node->children() as $n) {
@@ -241,15 +242,15 @@ class Evaluator implements EvaluatorInterface, VisitorInterface
         return $this->expressionResults[] = new ExpressionResult(
             $node,
             $this->emptyIsWildcard,
-            $this->emptyIsWildcard ? $this->tags : array(),
-            $this->emptyIsWildcard ? array() : $this->tags
+            $this->emptyIsWildcard ? $this->tags : [],
+            $this->emptyIsWildcard ? [] : $this->tags
         );
     }
 
     private function matchTags(ExpressionInterface $expression, $predicate)
     {
-        $matchedTags = array();
-        $unmatchedTags = array();
+        $matchedTags = [];
+        $unmatchedTags = [];
 
         foreach ($this->tags as $tag) {
             if ($predicate($tag)) {

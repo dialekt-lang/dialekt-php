@@ -1,4 +1,5 @@
 <?php
+
 namespace Dialekt\Renderer\Exception;
 
 use Exception;

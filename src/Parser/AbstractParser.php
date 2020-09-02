@@ -1,4 +1,5 @@
 <?php
+
 namespace Dialekt\Parser;
 
 use Dialekt\AST\EmptyExpression;
@@ -9,7 +10,7 @@ abstract class AbstractParser implements ParserInterface
 {
     public function __construct()
     {
-        $this->tokenStack = array();
+        $this->tokenStack = [];
 
         $this->setWildcardString(Token::WILDCARD_CHARACTER);
     }
